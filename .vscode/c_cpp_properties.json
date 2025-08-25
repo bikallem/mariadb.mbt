@@ -4,11 +4,13 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:HOME}/.moon/include"
+                "${env:HOME}/.moon/include",
+                "${env:C_INCLUDE_PATH}"
             ],
             "intelliSenseMode": "linux-gcc-x64",
             "cStandard": "c17",
-            "cppStandard": "c++17"
+            "cppStandard": "c++17",
+            "compilerPath": "${env:PATH}"
         }
     ],
     "version": 4

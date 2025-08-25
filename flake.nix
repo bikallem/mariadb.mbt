@@ -44,7 +44,7 @@
           LANG = "en_GB.UTF-8";
           LANGUAGE = "en_GB:en";
           LC_ALL = "en_GB.UTF-8";
-          C_INCLUDE_PATH = "${pkgs.glibc.dev}/include";
+          C_INCLUDE_PATH = "${pkgs.glibc.dev}/include:${pkgs.mariadb-connector-c.dev}/include";
           LIBRARY_PATH = "${pkgs.glibc}/lib";
           NIX_CFLAGS_COMPILE = "-I${pkgs.glibc.dev}/include";
           NIX_LDFLAGS = "-L${pkgs.glibc}/lib";

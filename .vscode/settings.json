@@ -3,6 +3,9 @@
     "files.associations": {
         "mysql.h": "c",
         "stdbool.h": "c",
-        "moonbit.h": "c"
-    }
+        "moonbit.h": "c",
+        "string.h": "c",
+        "stdint.h": "c",
+        "unistd.h": "c"
+    },    
 }
