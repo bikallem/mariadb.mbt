@@ -1,5 +1,5 @@
 ///| Trait for MySQL input parameter binding for prepared statements.
-trait ParamValue {
+pub trait ParamValue {
   set_value(self : Self, stmt : Stmt, index : Int) -> Unit
 }
 

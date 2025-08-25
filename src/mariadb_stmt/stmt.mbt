@@ -206,7 +206,7 @@ pub fn Stmt::execute(
   self : Self,
   param_values~ : Map[Int, &ParamValue] = {},
   result_column_types~ : Array[ParamType] = [],
-) -> MySqlStmtResult raise {
+) -> StmtResult raise {
   for i, value in param_values {
     value.set_value(self, i)
   }
@@ -260,7 +260,7 @@ fn[E] MYSQL_STMT::fail(
   err_msg : String,
   loc~ : SourceLoc,
 ) -> E raise {
-  raise MySqlStmtError::new(self, err_msg, loc~)
+  raise StmtError::new(self, err_msg, loc~)
 }
 
 ///|

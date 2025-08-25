@@ -1,21 +1,21 @@
 ///|
-pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
+pub suberror StmtError (String, UInt, String, SourceLoc)
 
 ///|
-pub impl Show for MySqlStmtError with output(self, logger) {
-  let MySqlStmtError((msg, errcode, error, loc)) = self
+pub impl Show for StmtError with output(self, logger) {
+  let StmtError((msg, errcode, error, loc)) = self
   logger.write_string("MySqlStmtError(\{msg}), (\{errcode} \{error}) at \{loc}")
 }
 
 ///|
 #callsite(autofill(loc))
-fn MySqlStmtError::new(
+fn StmtError::new(
   mysql_stmt : MYSQL_STMT,
   err_msg : String,
   loc~ : SourceLoc,
-) -> MySqlStmtError {
+) -> StmtError {
   let error = @ffi.moonbit_string(mysql_stmt_error(mysql_stmt))
-  MySqlStmtError((err_msg, mysql_stmt_errno(mysql_stmt), error, loc))
+  StmtError((err_msg, mysql_stmt_errno(mysql_stmt), error, loc))
 }
 
 ///|

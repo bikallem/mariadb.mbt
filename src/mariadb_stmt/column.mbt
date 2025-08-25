@@ -1,5 +1,5 @@
 ///|
-trait Column {
+pub trait Column {
   to(value : Bytes) -> Self
 }
 

@@ -8,24 +8,10 @@ import(
 // Values
 
 // Errors
-pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
-impl Show for MySqlStmtError
+pub suberror StmtError (String, UInt, String, SourceLoc)
+impl Show for StmtError
 
 // Types and methods
-pub(all) enum MySqlStmtFetchResult {
-  Data(MySqlStmtResultRow)
-  NoData
-}
-
-type MySqlStmtResult
-fn MySqlStmtResult::affected_rows(Self) -> UInt64
-fn MySqlStmtResult::fetch(Self) -> Result[MySqlStmtFetchResult, MySqlStmtError]
-fn MySqlStmtResult::iter(Self) -> Iter[Result[MySqlStmtResultRow, MySqlStmtError]]
-
-type MySqlStmtResultRow
-fn[T : Column] MySqlStmtResultRow::get(Self, Int) -> T?
-fn[T : Column] MySqlStmtResultRow::op_get(Self, Int) -> T
-
 pub(all) enum ParamType {
   Int
   UInt
@@ -40,13 +26,29 @@ pub(all) enum ParamType {
 
 type Stmt
 fn Stmt::close(Self) -> Unit
-fn Stmt::execute(Self, param_values? : Map[Int, &ParamValue], result_column_types? : Array[ParamType]) -> MySqlStmtResult raise
+fn Stmt::execute(Self, param_values? : Map[Int, &ParamValue], result_column_types? : Array[ParamType]) -> StmtResult raise
 fn Stmt::new(@mariadb.MySql, String, param_types? : Array[ParamType]) -> Self raise
+
+pub(all) enum StmtFetchResult {
+  Data(StmtResultRow)
+  NoData
+}
+
+type StmtResult
+fn StmtResult::affected_rows(Self) -> UInt64
+fn StmtResult::fetch(Self) -> Result[StmtFetchResult, StmtError]
+fn StmtResult::iter(Self) -> Iter[Result[StmtResultRow, StmtError]]
+
+type StmtResultRow
+fn[T : Column] StmtResultRow::get(Self, Int) -> T?
+fn[T : Column] StmtResultRow::op_get(Self, Int) -> T
 
 // Type aliases
 
 // Traits
-trait Column
+pub trait Column {
+  to(Bytes) -> Self
+}
 impl Column for Bool
 impl Column for Int
 impl Column for Int64
@@ -56,7 +58,9 @@ impl Column for Double
 impl Column for String
 impl Column for Bytes
 
-trait ParamValue
+pub trait ParamValue {
+  set_value(Self, Stmt, Int) -> Unit
+}
 impl ParamValue for Bool
 impl ParamValue for Int
 impl ParamValue for Int64

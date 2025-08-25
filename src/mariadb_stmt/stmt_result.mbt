@@ -1,16 +1,16 @@
 ///|
-struct MySqlStmtResult(Stmt)
+struct StmtResult(Stmt)
 
 ///|
-pub(all) enum MySqlStmtFetchResult {
-  Data(MySqlStmtResultRow)
+pub(all) enum StmtFetchResult {
+  Data(StmtResultRow)
   NoData // MYSQL_NO_DATA  
 }
 
 ///|
-pub fn MySqlStmtResult::fetch(
-  self : MySqlStmtResult,
-) -> Result[MySqlStmtFetchResult, MySqlStmtError] {
+pub fn StmtResult::fetch(
+  self : StmtResult,
+) -> Result[StmtFetchResult, StmtError] {
   guard self.result_binds is Some(result_binds) else { return Ok(NoData) }
   let row = mysql_stmt_fetch(self.mysql_stmt)
   if row == moonbit_MYSQL_NO_DATA() {
@@ -21,14 +21,9 @@ pub fn MySqlStmtResult::fetch(
       result_binds,
       self.result_binds_count,
     )
-    Ok(Data(MySqlStmtResultRow(column_values)))
+    Ok(Data(StmtResultRow(column_values)))
   } else {
-    Err(
-      MySqlStmtError::new(
-        self.mysql_stmt,
-        "Failed to fetch statement result row",
-      ),
-    )
+    Err(StmtError::new(self.mysql_stmt, "Failed to fetch statement result row"))
   }
 }
 
@@ -49,7 +44,7 @@ extern "c" fn moonbit_stmt_result_column_values(
 ) -> FixedArray[Bytes] = "moonbit_stmt_result_column_values"
 
 ///|
-pub fn MySqlStmtResult::affected_rows(self : MySqlStmtResult) -> UInt64 {
+pub fn StmtResult::affected_rows(self : StmtResult) -> UInt64 {
   mysql_stmt_affected_rows(self.mysql_stmt)
 }
 
@@ -57,12 +52,10 @@ pub fn MySqlStmtResult::affected_rows(self : MySqlStmtResult) -> UInt64 {
 extern "c" fn mysql_stmt_affected_rows(stmt : MYSQL_STMT) -> UInt64 = "mysql_stmt_affected_rows"
 
 ///|
-pub fn MySqlStmtResult::iter(
-  self : MySqlStmtResult,
-) -> Iter[Result[MySqlStmtResultRow, MySqlStmtError]] {
-  Iter::new(fn(
-    visit : (Result[MySqlStmtResultRow, MySqlStmtError]) -> IterResult,
-  ) {
+pub fn StmtResult::iter(
+  self : StmtResult,
+) -> Iter[Result[StmtResultRow, StmtError]] {
+  Iter::new(fn(visit : (Result[StmtResultRow, StmtError]) -> IterResult) {
     loop self.fetch() {
       Ok(Data(row)) => {
         guard visit(Ok(row)) == IterContinue else { break IterEnd }
