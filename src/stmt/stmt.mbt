@@ -17,6 +17,9 @@ priv type MYSQL_STMT
 priv type MYSQL_BIND_ARRAY
 
 ///|
+typealias @mariadb.MySql
+
+///|
 pub fn Stmt::new(
   mysql : MySql,
   query : String,
@@ -160,6 +163,9 @@ fn param_types_to_mysql_types_sizes(
   }
   MySqlStmtBind::{ sizes, types, unsigned }
 }
+
+///|
+typealias @c.Nullable
 
 ///|
 extern "c" fn mysql_stmt_init(mysql : MySql) -> Nullable[MYSQL_STMT] = "mysql_stmt_init"

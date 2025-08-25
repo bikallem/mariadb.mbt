@@ -124,9 +124,13 @@ extern "c" fn mysql_affected_rows(mysql : MySql) -> UInt = "mysql_affected_rows"
 /// by the MySQL API(`mysql_error()` and `mysql_errno()`)
 #inline
 #callsite(autofill(loc))
-fn[T] MySql::fail(self : MySql, err_msg : String, loc~ : SourceLoc) -> T raise {
+pub fn[T] MySql::fail(
+  self : MySql,
+  err_msg : String,
+  loc~ : SourceLoc,
+) -> T raise {
   self.close()
-  let error = moonbit_string(mysql_error(self))
+  let error = @ffi.moonbit_string(mysql_error(self))
   raise MySqlError((err_msg, mysql_errno(self), error, loc))
 }
 
@@ -134,4 +138,4 @@ fn[T] MySql::fail(self : MySql, err_msg : String, loc~ : SourceLoc) -> T raise {
 extern "c" fn mysql_errno(mysql : MySql) -> UInt = "mysql_errno"
 
 ///|
-extern "c" fn mysql_error(mysql : MySql) -> CString = "mysql_error"
+extern "c" fn mysql_error(mysql : MySql) -> @ffi.CString = "mysql_error"

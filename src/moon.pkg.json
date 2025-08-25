@@ -4,6 +4,7 @@
     ],
     "import": [
         "tonyfettes/encoding",
-        "tonyfettes/c"
+        "tonyfettes/c",
+        "bikallem/mariadb/internal/ffi"
     ]
 }

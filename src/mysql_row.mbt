@@ -17,11 +17,11 @@ extern "c" fn moonbit_row_column_values(
 ) -> FixedArray[Bytes] = "moonbit_row_column_values"
 
 ///|
-pub fn[T : Column] MySqlRow::op_get(self : MySqlRow, index : Int) -> T {
-  Column::to(self.0[index])
+pub fn MySqlRow::op_get(self : MySqlRow, index : Int) -> String {
+  @encoding.decode_lossy(encoding=UTF8, self.0[index])
 }
 
 ///|
-pub fn[T : Column] MySqlRow::get(self : MySqlRow, index : Int) -> T? {
-  self.0.get(index).map(Column::to)
+pub fn MySqlRow::get(self : MySqlRow, index : Int) -> String? {
+  self.0.get(index).map(@encoding.decode_lossy(encoding=UTF8, _))
 }

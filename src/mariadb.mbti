@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bikallem/backend/mariadb"
+package "bikallem/mariadb"
 
 // Values
 let client_compress : ClientFlag
@@ -22,9 +22,6 @@ fn connect(String, port? : UInt, String, String, String, unix_socket? : String, 
 pub suberror MySqlError (String, UInt, String, SourceLoc)
 impl Show for MySqlError
 
-pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
-impl Show for MySqlStmtError
-
 // Types and methods
 type ClientFlag
 impl BitOr for ClientFlag
@@ -33,6 +30,8 @@ type MySql
 fn MySql::affected_rows(Self) -> UInt
 fn MySql::close(Self) -> Unit
 fn MySql::execute(Self, String) -> MySqlResult? raise
+#callsite(autofill(loc))
+fn[T] MySql::fail(Self, String, loc~ : SourceLoc) -> T raise
 fn MySql::real_escape_string(Self, String) -> String
 
 type MySqlResult
@@ -41,61 +40,10 @@ fn MySqlResult::free_result(Self) -> Unit
 fn MySqlResult::iter(Self) -> Iter[MySqlRow]
 
 type MySqlRow
-fn[T : Column] MySqlRow::get(Self, Int) -> T?
-fn[T : Column] MySqlRow::op_get(Self, Int) -> T
-
-pub(all) enum MySqlStmtFetchResult {
-  Data(MySqlStmtResultRow)
-  NoData
-}
-
-type MySqlStmtResult
-fn MySqlStmtResult::affected_rows(Self) -> UInt64
-fn MySqlStmtResult::fetch(Self) -> Result[MySqlStmtFetchResult, MySqlStmtError]
-fn MySqlStmtResult::iter(Self) -> Iter[Result[MySqlStmtResultRow, MySqlStmtError]]
-
-type MySqlStmtResultRow
-fn[T : Column] MySqlStmtResultRow::get(Self, Int) -> T?
-fn[T : Column] MySqlStmtResultRow::op_get(Self, Int) -> T
-
-pub(all) enum ParamType {
-  Int
-  UInt
-  Int64
-  UInt64
-  Float
-  Double
-  String(UInt)
-  Blob(UInt)
-  Bool
-}
-
-type Stmt
-fn Stmt::close(Self) -> Unit
-fn Stmt::execute(Self, param_values? : Map[Int, &ParamValue], result_column_types? : Array[ParamType]) -> MySqlStmtResult raise
-fn Stmt::new(MySql, String, param_types? : Array[ParamType]) -> Self raise
+fn MySqlRow::get(Self, Int) -> String?
+fn MySqlRow::op_get(Self, Int) -> String
 
 // Type aliases
 
 // Traits
-trait Column
-impl Column for Bool
-impl Column for Int
-impl Column for Int64
-impl Column for UInt
-impl Column for Float
-impl Column for Double
-impl Column for String
-impl Column for Bytes
-
-trait ParamValue
-impl ParamValue for Bool
-impl ParamValue for Int
-impl ParamValue for Int64
-impl ParamValue for UInt
-impl ParamValue for UInt64
-impl ParamValue for Float
-impl ParamValue for Double
-impl ParamValue for String
-impl ParamValue for Bytes
 
