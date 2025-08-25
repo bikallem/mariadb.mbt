@@ -1,0 +1,118 @@
+{
+  "name": "MoonBit Dev Container",
+  "dockerFile": "Dockerfile",
+  "build": {
+    "args": {
+      "CONTAINER_USER": "dev1",
+      "DEV_PASSWORD": "devpass"
+    }
+  },
+  "remoteUser": "dev1",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "arrterian.nix-env-selector@1.1.0",
+        "bmalehorn.vscode-fish@1.0.39",
+        "github.copilot@1.350.0",
+        "github.copilot-chat@0.30.3",
+        "jnoortheen.nix-ide@0.4.22",
+        "mkhl.direnv@0.17.0",
+        "moonbit.moonbit-lang@0.1.2025080702",
+        "ms-azuretools.vscode-containers@2.1.0",
+        "ms-vscode.cmake-tools@1.21.36",
+        "ms-vscode.cpptools@1.27.2",
+        "ms-vscode.cpptools-extension-pack@1.3.1",
+        "ms-vscode.cpptools-themes@2.0.0",
+        "ms-vscode.makefile-tools@0.12.17",
+        "mtxr.sqltools@0.28.4",
+        "mtxr.sqltools-driver-mysql@0.6.4"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "fish",
+        "terminal.integrated.profiles.linux": {
+          "fish": {
+            "path": "/usr/bin/fish",
+            "args": [],
+            "env": {
+              "LANG": "en_GB.UTF-8",
+              "LANGUAGE": "en_GB:en",
+              "LC_ALL": "en_GB.UTF-8"
+            }
+          },
+          "bash": {
+            "path": "/bin/bash",
+            "args": [
+              "-l"
+            ],
+            "env": {
+              "LANG": "en_GB.UTF-8",
+              "LANGUAGE": "en_GB:en",
+              "LC_ALL": "en_GB.UTF-8"
+            }
+          }
+        },
+        "direnv.restart.automatic": true,
+        "nix.enableLanguageServer": true,
+        "nix.serverPath": "nil",
+        "terminal.integrated.env.linux": {
+          "DIRENV_LOG_FORMAT": "",
+          "LANG": "en_GB.UTF-8",
+          "LANGUAGE": "en_GB:en",
+          "LC_ALL": "en_GB.UTF-8"
+        },
+        "moonbit.installPath": "/home/dev1/.moon/bin",
+        "sqltools.connections": [
+          {
+            "name": "MariaDB Dev",
+            "driver": "MySQL",
+            "server": "localhost",
+            "port": 3306,
+            "database": "moonbit_dev",
+            "username": "dev1",
+            "askForPassword": false,
+            "password": "devpass",
+            "connectionTimeout": 15
+          },
+          {
+            "name": "MariaDB Test",
+            "driver": "MySQL",
+            "server": "localhost",
+            "port": 3306,
+            "database": "moonbit_test",
+            "username": "dev1",
+            "askForPassword": false,
+            "password": "devpass",
+            "connectionTimeout": 15
+          }
+        ]
+      }
+    }
+  },
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "postStartCommand": "sudo service mariadb start",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false,
+      "configureZshAsDefaultShell": false,
+      "username": "dev1",
+      "userUid": "1000",
+      "userGid": "1000"
+    }
+  },
+  "containerEnv": {
+    "LANG": "en_GB.UTF-8",
+    "LANGUAGE": "en_GB:en",
+    "LC_ALL": "en_GB.UTF-8",
+    "DIRENV_LOG_FORMAT": "",
+    "CONTAINER_USER": "dev1",
+    "DEV_PASSWORD": "devpass"
+  },
+  "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
+  "mounts": [
+    "source=mariadb-data,target=/var/lib/mysql,type=volume",
+    "source=${localWorkspaceFolderBasename}-moon-cache,target=/home/dev1/.moon,type=volume",
+    "source=${localWorkspaceFolderBasename}-nix-store,target=/nix,type=volume",
+    "source=${localWorkspaceFolderBasename}-vscode-extensions,target=/home/dev1/.vscode-server/extensions,type=volume"
+  ]
+}

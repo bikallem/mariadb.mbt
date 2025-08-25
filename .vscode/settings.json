@@ -1,0 +1,8 @@
+{
+    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix",
+    "files.associations": {
+        "mysql.h": "c",
+        "stdbool.h": "c",
+        "moonbit.h": "c"
+    }
+}
