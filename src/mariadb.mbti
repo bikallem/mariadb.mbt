@@ -19,8 +19,8 @@ let client_no_schema : ClientFlag
 fn connect(String, port? : UInt, String, String, String, unix_socket? : String, client_flag? : ClientFlag) -> MySql raise
 
 // Errors
-pub suberror MySqlError (String, UInt, String, SourceLoc)
-impl Show for MySqlError
+pub suberror Err (String, UInt, String, SourceLoc)
+impl Show for Err
 
 // Types and methods
 type ClientFlag
@@ -29,19 +29,19 @@ impl BitOr for ClientFlag
 type MySql
 fn MySql::affected_rows(Self) -> UInt
 fn MySql::close(Self) -> Unit
-fn MySql::execute(Self, String) -> MySqlResult? raise
+fn MySql::execute(Self, String) -> QueryResult? raise
 #callsite(autofill(loc))
 fn[T] MySql::fail(Self, String, loc~ : SourceLoc) -> T raise
 fn MySql::real_escape_string(Self, String) -> String
 
-type MySqlResult
-fn MySqlResult::fetch_row(Self) -> MySqlRow?
-fn MySqlResult::free_result(Self) -> Unit
-fn MySqlResult::iter(Self) -> Iter[MySqlRow]
+type QueryResult
+fn QueryResult::fetch_row(Self) -> QueryResultRow?
+fn QueryResult::free_result(Self) -> Unit
+fn QueryResult::iter(Self) -> Iter[QueryResultRow]
 
-type MySqlRow
-fn MySqlRow::get(Self, Int) -> String?
-fn MySqlRow::op_get(Self, Int) -> String
+type QueryResultRow
+fn QueryResultRow::get(Self, Int) -> String?
+fn QueryResultRow::op_get(Self, Int) -> String
 
 // Type aliases
 

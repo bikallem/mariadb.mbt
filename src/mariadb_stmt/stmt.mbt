@@ -103,16 +103,14 @@ const BLOB : UInt = 7
 const BOOL : UInt = 8
 
 ///|
-priv struct MySqlStmtBind {
+priv struct StmtBind {
   sizes : FixedArray[UInt]
   types : FixedArray[UInt]
   unsigned : FixedArray[Bool]
 }
 
 ///|
-fn param_types_to_mysql_types_sizes(
-  param_types : Array[ParamType],
-) -> MySqlStmtBind {
+fn param_types_to_mysql_types_sizes(param_types : Array[ParamType]) -> StmtBind {
   let sizes : FixedArray[UInt] = FixedArray::make(param_types.length(), 0)
   let types : FixedArray[UInt] = FixedArray::make(param_types.length(), 0)
   let unsigned : FixedArray[Bool] = FixedArray::make(
@@ -161,7 +159,7 @@ fn param_types_to_mysql_types_sizes(
       }
     }
   }
-  MySqlStmtBind::{ sizes, types, unsigned }
+  StmtBind::{ sizes, types, unsigned }
 }
 
 ///|
