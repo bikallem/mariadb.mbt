@@ -64,11 +64,13 @@ RUN nix-env -iA nixpkgs.direnv
 
 # Create Fish config directories
 RUN mkdir -p $HOME/.config/fish/conf.d \
+    && mkdir -p $HOME/.config/fish/completions \
     && mkdir -p $HOME/.config/direnv
 
 # Copy Fish configuration files
 COPY --chown=${CONTAINER_USER}:${USER_GID} fish/conf.d/*.fish /home/${CONTAINER_USER}/.config/fish/conf.d/
 COPY --chown=${CONTAINER_USER}:${USER_GID} fish/config.fish /home/${CONTAINER_USER}/.config/fish/config.fish
+COPY --chown=${CONTAINER_USER}:${USER_GID} fish/completions/moon.fish /home/${CONTAINER_USER}/.config/fish/completions/moon.fish
 
 # Copy MariaDB initialization script
 COPY --chown=${CONTAINER_USER}:${USER_GID} init-mariadb.sh /home/${CONTAINER_USER}/init-mariadb.sh

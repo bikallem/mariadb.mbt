@@ -47,7 +47,7 @@
           LIBRARY_PATH = "${pkgs.glibc}/lib";
           NIX_CFLAGS_COMPILE = "-I${pkgs.glibc.dev}/include";
           NIX_LDFLAGS = "-L${pkgs.glibc}/lib";
-          MOON_HOME = "$HOME/.moon";
+          MOON_HOME = builtins.getEnv "HOME" + "/.moon";
           DATABASE_URL = "mysql://bikallem:devpass@localhost:3306/moonbit_dev";
           TEST_DATABASE_URL = "mysql://bikallem:devpass@localhost:3306/moonbit_test";
         };
