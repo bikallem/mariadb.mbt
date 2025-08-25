@@ -1,15 +1,19 @@
 {
   "name": "bikallem/mariadb",
   "version": "0.1.0",
-  "deps": {    
-    "tonyfettes/encoding": "0.3.6",    
+  "deps": {
+    "tonyfettes/encoding": "0.3.6",
     "tonyfettes/c": "0.5.0"
   },
   "readme": "README.md",
-  "repository": "",
+  "repository": "github.com/bikallem/mariadb",
   "license": "Apache-2.0",
-  "keywords": [],
-  "description": "",
+  "keywords": [
+    "MoonBit",
+    "mariadb",
+    "mysql"
+  ],
+  "description": "MariaDB/MySQL client library for Moonbit",
   "source": "src",
   "preferred-target": "native"
 }

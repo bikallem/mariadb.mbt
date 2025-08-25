@@ -1,6 +1,6 @@
 {
     "native-stub": [
-        "stmt.c"
+        "mariadb_stmt.c"
     ],
     "import": [
         "tonyfettes/encoding",
