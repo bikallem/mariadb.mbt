@@ -30,6 +30,7 @@
             mycli # Better MySQL/MariaDB CLI
 
             # Core development tools
+            llvmPackages_21.clang-tools
             gnumake
             gcc
             gdb
