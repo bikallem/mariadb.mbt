@@ -1,0 +1,9 @@
+{    
+    "native-stub": [
+        "mariadb.c"
+    ],
+    "import": [
+        "tonyfettes/encoding",
+        "tonyfettes/c"
+    ]
+}

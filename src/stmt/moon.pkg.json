@@ -1,0 +1,10 @@
+{
+    "native-stub": [
+        "stmt.c"
+    ],
+    "import": [
+        "tonyfettes/encoding",
+        "tonyfettes/c",
+        "bikallem/mariadb"
+    ]
+}
