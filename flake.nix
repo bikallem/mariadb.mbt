@@ -23,6 +23,7 @@
             # Development tools
             git
             nodejs_24
+            delta
 
             # Database
             mariadb-connector-c
@@ -48,8 +49,15 @@
           NIX_CFLAGS_COMPILE = "-I${pkgs.glibc.dev}/include";
           NIX_LDFLAGS = "-L${pkgs.glibc}/lib";
           MOON_HOME = builtins.getEnv "HOME" + "/.moon";
-          DATABASE_URL = "mysql://bikallem:devpass@localhost:3306/moonbit_dev";
-          TEST_DATABASE_URL = "mysql://bikallem:devpass@localhost:3306/moonbit_test";
+
+          shellHook = ''
+            # Configure git to use delta from the Nix environment
+            git config --global core.pager "${pkgs.delta}/bin/delta"
+            git config --global interactive.diffFilter "${pkgs.delta}/bin/delta --color-only"
+            git config --global delta.navigate true
+            git config --global delta.light false
+            git config --global delta.side-by-side true
+          '';
         };
       }
     );
