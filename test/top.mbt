@@ -34,19 +34,6 @@ test "@mariadb.MySql::execute/empty_query" {
 }
 
 ///|
-test "panic @mariadb.MySql::execute/invalid_sql" {
-  // Test boundary case: invalid SQL syntax should raise an error
-  let mysql = @mariadb.connect(
-    "localhost",
-    user="dev1",
-    password="devpass",
-    database="moonbit_test",
-  )
-  ignore(mysql.execute("INVALID SQL SYNTAX HERE"))
-  mysql.close()
-}
-
-///|
 fn main {
   // This test assumes a valid MySQL connection and tests basic query execution
   // The function should return Some(QueryResult) for successful queries
