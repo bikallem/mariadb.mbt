@@ -11,7 +11,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "arrterian.nix-env-selector@1.1.0",
         "bmalehorn.vscode-fish@1.0.39",
         "github.copilot@1.350.0",
         "github.copilot-chat@0.30.3",
@@ -52,8 +51,9 @@
           }
         },
         "direnv.restart.automatic": false,
+        "direnv.watchForChanges": false,
         "nix.enableLanguageServer": true,
-        "nix.serverPath": "nil",
+        "nix.serverPath": "nixd",
         "terminal.integrated.env.linux": {
           "DIRENV_LOG_FORMAT": "",
           "LANG": "en_GB.UTF-8",
@@ -87,7 +87,7 @@
         ]
       }
     }
-  },  
+  },
   "postStartCommand": "sudo service mariadb start",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
