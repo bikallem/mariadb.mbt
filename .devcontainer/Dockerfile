@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     locales \
     fish \
+    git \
     starship \
     mariadb-server \
     mariadb-client \
@@ -73,10 +74,6 @@ RUN moon shell-completion --shell fish > ~/.config/fish/completions/moon.fish
 # Copy Fish configuration files
 COPY --chown=${CONTAINER_USER}:${USER_GID} fish/conf.d/*.fish /home/${CONTAINER_USER}/.config/fish/conf.d/
 COPY --chown=${CONTAINER_USER}:${USER_GID} fish/config.fish /home/${CONTAINER_USER}/.config/fish/config.fish
-
-# Copy MariaDB initialization script
-COPY --chown=${CONTAINER_USER}:${USER_GID} init-mariadb.sh /home/${CONTAINER_USER}/init-mariadb.sh
-RUN chmod +x /home/${CONTAINER_USER}/init-mariadb.sh
 
 ENV SHELL="/usr/bin/fish"
 

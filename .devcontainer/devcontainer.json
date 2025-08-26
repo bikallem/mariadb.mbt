@@ -51,7 +51,7 @@
             }
           }
         },
-        "direnv.restart.automatic": true,
+        "direnv.restart.automatic": false,
         "nix.enableLanguageServer": true,
         "nix.serverPath": "nil",
         "terminal.integrated.env.linux": {
