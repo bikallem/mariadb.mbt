@@ -8,9 +8,9 @@
 
   outputs =
     {
-      self,
       nixpkgs,
       flake-utils,
+      ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -20,8 +20,8 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # Development tools            
-            nodejs_24            
+            # Development tools
+            nodejs_24
 
             # Database
             mariadb-connector-c
@@ -36,7 +36,7 @@
 
             # nix tools
             nixfmt-rfc-style
-            nil
+            nixd
           ];
 
           # Environment variables that will be set
@@ -49,6 +49,8 @@
           NIX_LDFLAGS = "-L${pkgs.glibc}/lib";
           MOON_HOME = builtins.getEnv "HOME" + "/.moon";
         };
+
+        formatter = pkgs.nixfmt-tree;
       }
     );
 }
