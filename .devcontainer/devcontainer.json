@@ -87,8 +87,7 @@
         ]
       }
     }
-  },
-  "postCreateCommand": ".devcontainer/post-create.sh",
+  },  
   "postStartCommand": "sudo service mariadb start",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
