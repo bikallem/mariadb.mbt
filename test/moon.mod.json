@@ -1,0 +1,9 @@
+{
+    "name" : "bikallem/mariadb_test",
+    "deps": {
+        "bikallem/mariadb": {
+            "path": "../"
+        }
+    },
+    "preferred-target": "native"
+}

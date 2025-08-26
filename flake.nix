@@ -45,8 +45,8 @@
           LANG = "en_GB.UTF-8";
           LANGUAGE = "en_GB:en";
           LC_ALL = "en_GB.UTF-8";
-          C_INCLUDE_PATH = "${pkgs.glibc.dev}/include:${pkgs.mariadb-connector-c.dev}/include";
-          LIBRARY_PATH = "${pkgs.glibc}/lib";
+          C_INCLUDE_PATH = "${pkgs.mariadb-connector-c.dev}/include";
+          LIBRARY_PATH = "${pkgs.mariadb-connector-c}/lib/mariadb";
           NIX_CFLAGS_COMPILE = "-I${pkgs.glibc.dev}/include";
           NIX_LDFLAGS = "-L${pkgs.glibc}/lib";
           MOON_HOME = builtins.getEnv "HOME" + "/.moon";

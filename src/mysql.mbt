@@ -10,9 +10,9 @@ type MySql
 pub fn connect(
   host : String,
   port? : UInt,
-  user : String,
-  password : String,
-  database : String,
+  user~ : String,
+  password~ : String,
+  database~ : String,
   unix_socket? : String,
   client_flag~ : ClientFlag = 0,
 ) -> MySql raise {
