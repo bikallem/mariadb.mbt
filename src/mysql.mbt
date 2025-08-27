@@ -9,7 +9,7 @@ type MySql
 /// Connect to MySQL with the given credentials. It sets the resulting connection 
 /// character set to `utf8mb4`.
 pub fn connect(
-  host : String,
+  host~ : String,
   port? : UInt,
   user~ : String,
   password~ : String,

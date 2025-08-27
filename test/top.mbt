@@ -3,7 +3,7 @@ test "@mariadb.MySql::execute" {
   // This test assumes a valid MySQL connection and tests basic query execution
   // The function should return Some(QueryResult) for successful queries
   let mysql = @mariadb.connect(
-    "localhost",
+    host="localhost",
     user="dev1",
     password="devpass",
     database="moonbit_test",
@@ -20,7 +20,7 @@ test "@mariadb.MySql::execute" {
 test "@mariadb.MySql::execute/empty_query" {
   // Test boundary case: empty query string
   let mysql = @mariadb.connect(
-    "localhost",
+    host="localhost",
     user="dev1",
     password="devpass",
     database="moonbit_test",
@@ -39,7 +39,7 @@ fn main {
   // The function should return Some(QueryResult) for successful queries
   try {
     let mysql = @mariadb.connect(
-      "localhost",
+      host="localhost",
       user="dev1",
       password="devpass",
       database="moonbit_test",
