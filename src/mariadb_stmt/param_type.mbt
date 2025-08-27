@@ -1,4 +1,5 @@
-///| MySQL data types encoded by the parameter.
+///|
+/// MySQL data types encoded by the parameter.
 pub(all) enum ParamType {
   Int // 32Bit, Corresponds to Moonbit Int/Bool
   UInt // 32Bit, Corresponds to Moonbit UInt

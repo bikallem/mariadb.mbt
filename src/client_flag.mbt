@@ -1,4 +1,5 @@
-///| see mariadb_com.h
+///|
+/// see mariadb_com.h
 struct ClientFlag(UInt64)
 
 ///|

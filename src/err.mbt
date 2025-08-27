@@ -1,4 +1,5 @@
-///| MySQL error information, including the user error message, mysql error code, and mysql error message.
+///|
+/// MySQL error information, including the user error message, mysql error code, and mysql error message.
 pub suberror Err (String, UInt, String, SourceLoc)
 
 ///|

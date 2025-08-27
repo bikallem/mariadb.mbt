@@ -16,7 +16,7 @@ let client_multi_statements : ClientFlag
 
 let client_no_schema : ClientFlag
 
-fn connect(String, port? : UInt, String, String, String, unix_socket? : String, client_flag? : ClientFlag) -> MySql raise
+fn connect(String, port? : UInt, user~ : String, password~ : String, database~ : String, unix_socket? : String, client_flag? : ClientFlag) -> MySql raise
 
 // Errors
 pub suberror Err (String, UInt, String, SourceLoc)

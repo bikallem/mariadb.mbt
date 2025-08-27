@@ -1,4 +1,5 @@
-///| Mariadb prepared statement
+///|
+/// Mariadb prepared statement
 struct Stmt {
   mysql_stmt : MYSQL_STMT
   query : String
@@ -12,18 +13,19 @@ struct Stmt {
 #external
 priv type MYSQL_STMT
 
-///| MYSQL_BIND* - array of MYSQL_BIND
+///|
+/// MYSQL_BIND* - array of MYSQL_BIND
 #external
 priv type MYSQL_BIND_ARRAY
 
 ///|
-typealias @mariadb.MySql
+// typealias @mariadb.MySql
 
 ///|
 pub fn Stmt::new(
-  mysql : MySql,
+  mysql : @mariadb.MySql,
   query : String,
-  param_types~ : Array[ParamType] = [],
+  param_types? : Array[ParamType] = [],
 ) -> Stmt raise {
   let mysql_stmt = mysql_stmt_init(mysql)
   guard mysql_stmt.to() is Some(mysql_stmt) else {
@@ -166,7 +168,8 @@ fn param_types_to_mysql_types_sizes(param_types : Array[ParamType]) -> StmtBind 
 typealias @c.Nullable
 
 ///|
-extern "c" fn mysql_stmt_init(mysql : MySql) -> Nullable[MYSQL_STMT] = "mysql_stmt_init"
+#borrow(mysql)
+extern "c" fn mysql_stmt_init(mysql : @mariadb.MySql) -> Nullable[MYSQL_STMT] = "mysql_stmt_init"
 
 ///|
 #borrow(query)
@@ -180,6 +183,7 @@ extern "c" fn mysql_stmt_prepare(
 extern "c" fn mysql_stmt_param_count(stmt : MYSQL_STMT) -> UInt = "mysql_stmt_param_count"
 
 ///|
+#borrow(sizes, types, unsigned)
 extern "c" fn moonbit_stmt_make_binds(
   columns_count : UInt,
   sizes : FixedArray[UInt],
@@ -202,8 +206,8 @@ extern "c" fn moonbit_free_binds(
 ///|
 pub fn Stmt::execute(
   self : Self,
-  param_values~ : Map[Int, &ParamValue] = {},
-  result_column_types~ : Array[ParamType] = [],
+  param_values? : Map[Int, &ParamValue] = {},
+  result_column_types? : Array[ParamType] = [],
 ) -> StmtResult raise {
   for i, value in param_values {
     value.set_value(self, i)
@@ -245,7 +249,7 @@ extern "c" fn mysql_stmt_execute(stmt : MYSQL_STMT) -> Int = "mysql_stmt_execute
 ///|
 extern "c" fn mysql_stmt_field_count(stmt : MYSQL_STMT) -> UInt = "mysql_stmt_field_count"
 
-///| 
+///|
 extern "c" fn mysql_stmt_bind_result(
   stmt : MYSQL_STMT,
   param_binds : MYSQL_BIND_ARRAY,

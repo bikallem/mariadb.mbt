@@ -5,7 +5,8 @@ typealias @c.Nullable
 #external
 type MySql
 
-///| Connect to MySQL with the given credentials. It sets the resulting connection 
+///|
+/// Connect to MySQL with the given credentials. It sets the resulting connection 
 /// character set to `utf8mb4`.
 pub fn connect(
   host : String,
@@ -14,7 +15,7 @@ pub fn connect(
   password~ : String,
   database~ : String,
   unix_socket? : String,
-  client_flag~ : ClientFlag = 0,
+  client_flag? : ClientFlag = 0,
 ) -> MySql raise {
   let mysql = mysql_init(Nullable::none())
   guard mysql.to() is Some(mysql) else {
@@ -91,7 +92,8 @@ extern "c" fn mysql_real_escape_string(
   length : UInt,
 ) -> Int = "mysql_real_escape_string"
 
-///| Executes the given query and returns the result.
+///|
+/// Executes the given query and returns the result.
 pub fn MySql::execute(self : Self, query : String) -> QueryResult? raise {
   let bytes_query = @encoding.encode(encoding=UTF8, query)
   let len = bytes_query.length().reinterpret_as_uint()
@@ -120,7 +122,8 @@ pub fn MySql::affected_rows(self : Self) -> UInt {
 ///|
 extern "c" fn mysql_affected_rows(mysql : MySql) -> UInt = "mysql_affected_rows"
 
-///| Raise a Failure with the current MySQL error information as returned
+///|
+/// Raise a Failure with the current MySQL error information as returned
 /// by the MySQL API(`mysql_error()` and `mysql_errno()`)
 #inline
 #callsite(autofill(loc))
