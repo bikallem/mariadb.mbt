@@ -15,16 +15,33 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            (final: prev: {
+              mariadb-scripts = final.callPackage ./nix/mariadb.nix { };
+            })
+          ];
+        };
       in
       {
         devShells.default = pkgs.mkShell {
+          shellHook = ''
+            export PROJECT_ROOT="$(pwd)";
+            export MARIADB_HOME="$PROJECT_ROOT/.mariadb";
+            export MARIADB_DATA="$MARIADB_HOME/data";
+            export MARIADB_SOCKET="$MARIADB_HOME/mariadb.sock";
+            export MARIADB_PID="$MARIADB_HOME/mariadb.pid";
+          '';
+
           buildInputs = with pkgs; [
             # Development tools
             nodejs_24
 
             # Database
+            mariadb
             mariadb-connector-c
+            mariadb-scripts
             mycli # Better MySQL/MariaDB CLI
 
             # Core development tools
@@ -40,13 +57,8 @@
           ];
 
           # Environment variables that will be set
-          LANG = "en_GB.UTF-8";
-          LANGUAGE = "en_GB:en";
-          LC_ALL = "en_GB.UTF-8";
           C_INCLUDE_PATH = "${pkgs.mariadb-connector-c.dev}/include";
           LIBRARY_PATH = "${pkgs.mariadb-connector-c}/lib/mariadb";
-          NIX_CFLAGS_COMPILE = "-I${pkgs.glibc.dev}/include";
-          NIX_LDFLAGS = "-L${pkgs.glibc}/lib";
           MOON_HOME = builtins.getEnv "HOME" + "/.moon";
         };
 
