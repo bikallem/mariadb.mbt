@@ -1,12 +1,12 @@
 {
   "name": "bikallem/mariadb",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "deps": {
     "tonyfettes/encoding": "0.3.6",
     "tonyfettes/c": "0.5.0"
   },
   "readme": "README.md",
-  "repository": "github.com/bikallem/mariadb",
+  "repository": "github.com/bikallem/mariadb.mbt",
   "license": "Apache-2.0",
   "keywords": [
     "MoonBit",

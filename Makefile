@@ -1,11 +1,11 @@
-all: clean fmt build
+all: clean fmt info build
 
 build:
 	moon build	
 
 fmt: 
 	moon fmt
-	clang-format -i src/**/*.c
+	clang-format -i src/**/**/*.c
 
 clean:
 	moon clean
