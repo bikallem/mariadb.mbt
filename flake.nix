@@ -34,35 +34,25 @@
             export MARIADB_PID="$MARIADB_HOME/mariadb.pid";
           '';
 
-          buildInputs = with pkgs; [
-            # Development tools
-            nodejs_24
-
+          buildInputs = with pkgs; [            
             # Database
             mariadb
             mariadb-connector-c
             mariadb-scripts
             mycli # Better MySQL/MariaDB CLI
 
-            # Core development tools
-            llvmPackages_21.clang-tools
+            # native development tools
+            llvmPackages_21.clang-tools # clang-format
             gnumake
             gcc
-            gdb
-            valgrind
-
-            # nix tools
-            nixfmt-rfc-style
-            nixd
+            gdb            
           ];
 
           # Environment variables that will be set
           C_INCLUDE_PATH = "${pkgs.mariadb-connector-c.dev}/include";
-          LIBRARY_PATH = "${pkgs.mariadb-connector-c}/lib/mariadb";
+          LD_LIBRARY_PATH = "${pkgs.mariadb-connector-c}/lib/mariadb";
           MOON_HOME = builtins.getEnv "HOME" + "/.moon";
         };
-
-        formatter = pkgs.nixfmt-tree;
       }
     );
 }
