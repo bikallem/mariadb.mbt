@@ -19,7 +19,7 @@
           inherit system;
           overlays = [
             (final: prev: {
-              mariadb-scripts = final.callPackage ./nix/mariadb.nix { };
+              mariadb-scripts = final.callPackage ./mariadb.nix { };
             })
           ];
         };
