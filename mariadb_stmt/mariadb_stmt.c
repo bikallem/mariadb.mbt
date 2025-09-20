@@ -30,10 +30,10 @@ buffer_type(uint32_t type)
       return MYSQL_TYPE_FLOAT;
     case DOUBLE:
       return MYSQL_TYPE_DOUBLE;
-    case STRING:
-      return MYSQL_TYPE_STRING;
     case BLOB:
       return MYSQL_TYPE_BLOB;
+    default:
+      return MYSQL_TYPE_STRING;
   }
 }
 

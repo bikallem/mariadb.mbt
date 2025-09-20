@@ -34,18 +34,18 @@
             export MARIADB_PID="$MARIADB_HOME/mariadb.pid";
           '';
 
-          buildInputs = with pkgs; [            
+          buildInputs = with pkgs; [
             # Database
             mariadb
             mariadb-connector-c
             mariadb-scripts
             mycli # Better MySQL/MariaDB CLI
 
-            # native development tools
-            llvmPackages_21.clang-tools # clang-format
-            gnumake
-            gcc
-            gdb            
+            # core development tools
+            llvmPackages_21.clang-tools
+            llvmPackages_21.clang
+            llvmPackages_21.lldb
+            mold
           ];
 
           # Environment variables that will be set

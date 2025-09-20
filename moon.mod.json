@@ -13,7 +13,6 @@
     "mariadb",
     "mysql"
   ],
-  "description": "MariaDB/MySQL client library for Moonbit",
-  "source": "src",
+  "description": "MariaDB/MySQL client library for Moonbit",  
   "preferred-target": "native"
 }

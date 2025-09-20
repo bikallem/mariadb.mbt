@@ -5,7 +5,7 @@ build:
 
 fmt: 
 	moon fmt
-	clang-format -i src/**/**/*.c
+	clang-format -i ./**/*.c
 
 clean:
 	moon clean
