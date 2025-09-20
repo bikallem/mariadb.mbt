@@ -11,7 +11,7 @@ moonbit_bytes(const void* data)
   return mb_bytes;
 }
 
-    MOONBIT_FFI_EXPORT
+MOONBIT_FFI_EXPORT
 moonbit_bytes_t*
 moonbit_row_column_values(MYSQL_ROW row, uint32_t count)
 {
