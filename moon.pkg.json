@@ -1,4 +1,4 @@
-{    
+{
     "native-stub": [
         "mariadb.c"
     ],
@@ -6,5 +6,5 @@
         "tonyfettes/encoding",
         "tonyfettes/c",
         "bikallem/mariadb/internal/ffi"
-    ]    
+    ]
 }

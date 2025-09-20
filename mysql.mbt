@@ -1,7 +1,4 @@
 ///|
-typealias @c.Nullable
-
-///|
 #external
 type MySql
 
@@ -132,7 +129,6 @@ pub fn[T] MySql::fail(
   err_msg : String,
   loc~ : SourceLoc,
 ) -> T raise {
-  self.close()
   let error = @ffi.moonbit_string(mysql_error(self))
   raise Err((err_msg, mysql_errno(self), error, loc))
 }
@@ -141,4 +137,4 @@ pub fn[T] MySql::fail(
 extern "c" fn mysql_errno(mysql : MySql) -> UInt = "mysql_errno"
 
 ///|
-extern "c" fn mysql_error(mysql : MySql) -> @ffi.CString = "mysql_error"
+extern "c" fn mysql_error(mysql : MySql) -> CString = "mysql_error"
