@@ -2,7 +2,7 @@
 
 [
   (pkgs.writeShellScriptBin "start-mariadb" ''
-    set -e
+    set -e    
     if [ ! -d "$MARIADB_DATA" ]; then
       echo "Initializing MariaDB data directory..."      
       mariadb-install-db --no-defaults \
