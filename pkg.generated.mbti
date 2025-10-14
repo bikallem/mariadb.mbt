@@ -20,10 +20,13 @@ fn connect(host~ : String, port? : UInt, user~ : String, password~ : String, dat
 
 // Errors
 pub suberror Err (String, UInt, String, SourceLoc)
+fn Err::output(Self, &Logger) -> Unit // from trait `Show`
+fn Err::to_string(Self) -> String // from trait `Show`
 impl Show for Err
 
 // Types and methods
 type ClientFlag
+fn ClientFlag::lor(Self, Self) -> Self // from trait `BitOr`
 impl BitOr for ClientFlag
 
 type MySql

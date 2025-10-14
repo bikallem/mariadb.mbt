@@ -42,10 +42,11 @@
             mycli # Better MySQL/MariaDB CLI
 
             # core development tools
-            llvmPackages_21.clang-tools
-            llvmPackages_21.clang
-            llvmPackages_21.lldb
-            mold
+            llvmPackages.clang-tools
+            llvmPackages.clang
+            llvmPackages.lldb
+            llvmPackages.llvm
+            valgrind            
           ];
 
           # Environment variables that will be set
