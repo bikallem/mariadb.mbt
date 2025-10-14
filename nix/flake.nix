@@ -46,7 +46,7 @@
             llvmPackages.clang
             llvmPackages.lldb
             llvmPackages.llvm
-            valgrind            
+            valgrind
           ];
 
           # Environment variables that will be set

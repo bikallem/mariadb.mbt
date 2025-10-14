@@ -6,5 +6,9 @@
         "tonyfettes/encoding",
         "tonyfettes/c",
         "bikallem/mariadb/internal/ffi"
+    ],
+    "supported-targets": [
+        "native",
+        "llvm"
     ]
 }

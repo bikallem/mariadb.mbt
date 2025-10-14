@@ -3,6 +3,7 @@
         "cstring.c"
     ],
     "supported-targets": [
-        "native"
+        "native",
+        "llvm"
     ]
 }
