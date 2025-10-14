@@ -2,8 +2,9 @@
   "name": "bikallem/mariadb",
   "version": "0.0.1",
   "deps": {
-    "tonyfettes/encoding": "0.3.6",
-    "tonyfettes/c": "0.5.4"
+    "bikallem/cffi": {
+      "path": "../cffi"
+    }
   },
   "readme": "README.md",
   "repository": "github.com/bikallem/mariadb.mbt",
@@ -13,7 +14,7 @@
     "mariadb",
     "mysql"
   ],
-  "description": "MariaDB/MySQL client library for Moonbit",  
+  "description": "MariaDB/MySQL client library for Moonbit",
   "preferred-target": "native",
   "source": "src"
 }

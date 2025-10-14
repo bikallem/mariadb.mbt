@@ -14,40 +14,39 @@ pub fn connect(
   unix_socket? : String,
   client_flag? : ClientFlag = 0,
 ) -> MySql raise {
-  let mysql = mysql_init(Nullable::none())
-  guard mysql.to() is Some(mysql) else {
-    fail("Failed to initialize MySQL connection")
+  let mysql = mysql_init(Pointer::null())
+  guard !mysql.is_null() else { fail("Failed to initialize MySQL connection") }
+  let mysql : MySql = mysql.unsafe_cast()
+  let host = @encoding/utf8.encode(host)
+  let user = @encoding/utf8.encode(user)
+  let password = @encoding/utf8.encode(password)
+  let database = @encoding/utf8.encode(database)
+  let unix_socket : Bytes = match unix_socket {
+    Some(socket) => @encoding/utf8.encode(socket)
+    None => Bytes::make(0, b'0')
   }
-  let encode = @encoding.encode(encoding=UTF8, _)
-  let host = encode(host)
-  let user = encode(user)
-  let password = encode(password)
-  let database = encode(database)
-  let unix_socket = match unix_socket {
-    Some(socket) => Nullable::some(encode(socket))
-    None => Nullable::none()
-  }
-  guard mysql_real_connect(
-      mysql,
-      host,
-      user,
-      password,
-      database,
-      port.unwrap_or(3306),
-      unix_socket,
-      client_flag.inner(),
-    ).to()
-    is Some(conn) else {
+  let conn = mysql_real_connect(
+    mysql,
+    host,
+    user,
+    password,
+    database,
+    port.unwrap_or(3306),
+    unix_socket,
+    client_flag.inner(),
+  )
+  guard !conn.is_null() else {
     mysql.fail("Failed to connect to MariaDB database")
   }
   if mysql_set_character_set(mysql, b"utf8mb4") != 0 {
     mysql.fail("Failed to set character set to 'utf8mb4'")
   }
-  conn
+  conn.unsafe_cast()
 }
 
 ///|
-extern "c" fn mysql_init(mysql : Nullable[MySql]) -> Nullable[MySql] = "mysql_init"
+#borrow(mysql)
+extern "c" fn mysql_init(mysql : Pointer) -> Pointer = "mysql_init"
 
 ///|
 #borrow(host, user, passwd, db, unix_socket)
@@ -58,9 +57,9 @@ extern "c" fn mysql_real_connect(
   passwd : Bytes,
   db : Bytes,
   port : UInt,
-  unix_socket : Nullable[Bytes],
+  unix_socket : Bytes,
   client_flag : UInt64,
-) -> Nullable[MySql] = "mysql_real_connect"
+) -> Pointer = "mysql_real_connect"
 
 ///|
 #borrow(cs)
@@ -68,7 +67,7 @@ extern "c" fn mysql_set_character_set(mysql : MySql, cs : Bytes) -> Int = "mysql
 
 ///|
 pub fn MySql::real_escape_string(self : Self, s : String) -> String {
-  let from = @encoding.encode(encoding=UTF8, s)
+  let from = @encoding/utf8.encode(s)
   let to = Bytes::make(from.length() * 2 + 1, 0) // Allocate enough space for escaped string
   let escaped_len = mysql_real_escape_string(
     self,
@@ -77,7 +76,7 @@ pub fn MySql::real_escape_string(self : Self, s : String) -> String {
     from.length().reinterpret_as_uint(),
   )
   let to = to[0:escaped_len]
-  @encoding.decode_lossy(encoding=UTF8, to)
+  @encoding/utf8.decode_lossy(to)
 }
 
 ///|
@@ -92,7 +91,7 @@ extern "c" fn mysql_real_escape_string(
 ///|
 /// Executes the given query and returns the result.
 pub fn MySql::execute(self : Self, query : String) -> QueryResult? raise {
-  let bytes_query = @encoding.encode(encoding=UTF8, query)
+  let bytes_query = @encoding/utf8.encode(query)
   let len = bytes_query.length().reinterpret_as_uint()
   if mysql_real_query(self, bytes_query, len) != 0 {
     self.fail("Failed to execute query '\{query}'")
@@ -129,7 +128,7 @@ pub fn[T] MySql::fail(
   err_msg : String,
   loc~ : SourceLoc,
 ) -> T raise {
-  let error = @ffi.moonbit_string(mysql_error(self))
+  let error = mysql_error(self).to_bytes() |> @encoding/utf8.decode_lossy(_)
   raise Err((err_msg, mysql_errno(self), error, loc))
 }
 
@@ -137,4 +136,4 @@ pub fn[T] MySql::fail(
 extern "c" fn mysql_errno(mysql : MySql) -> UInt = "mysql_errno"
 
 ///|
-extern "c" fn mysql_error(mysql : MySql) -> CString = "mysql_error"
+extern "c" fn mysql_error(mysql : MySql) -> Pointer = "mysql_error"

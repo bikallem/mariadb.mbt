@@ -1,9 +1,0 @@
-{
-    "native-stub": [
-        "cstring.c"
-    ],
-    "supported-targets": [
-        "native",
-        "llvm"
-    ]
-}

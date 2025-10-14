@@ -10,25 +10,29 @@ priv type MYSQL_RES
 
 ///|
 fn QueryResult::new(mysql : MySql) -> QueryResult? {
-  guard mysql_store_result(mysql).to() is Some(res) else { return None }
+  let res = mysql_store_result(mysql)
+  guard !res.is_null() else { return None }
+  let res : MYSQL_RES = res.unsafe_cast()
   let column_count = mysql_num_fields(res)
   Some(QueryResult::{ res, column_count })
 }
 
 ///|
-extern "c" fn mysql_store_result(mysql : MySql) -> Nullable[MYSQL_RES] = "mysql_store_result"
+extern "c" fn mysql_store_result(mysql : MySql) -> Pointer = "mysql_store_result"
 
 ///|
 extern "c" fn mysql_num_fields(res : MYSQL_RES) -> UInt = "mysql_num_fields"
 
 ///|
 pub fn QueryResult::fetch_row(self : Self) -> QueryResultRow? {
-  guard mysql_fetch_row(self.res).to() is Some(row) else { return None }
+  let row = mysql_fetch_row(self.res)
+  guard !row.is_null() else { return None }
+  let row : MYSQL_ROW = row.unsafe_cast()
   Some(QueryResultRow::new(row, self.column_count))
 }
 
 ///|
-extern "c" fn mysql_fetch_row(res : MYSQL_RES) -> Nullable[MYSQL_ROW] = "mysql_fetch_row"
+extern "c" fn mysql_fetch_row(res : MYSQL_RES) -> Pointer = "mysql_fetch_row"
 
 ///|
 pub fn QueryResult::free_result(self : QueryResult) -> Unit {

@@ -1,20 +1,19 @@
 all: clean fmt info build
 
 build:
-	moon build	
+	NEW_MOON=1 moon build	
 
 fmt: 
-	moon fmt
-	clang-format -i ./**/*.c
-	clang-format -i *.c
+	NEW_MOON=1 moon fmt
+	clang-format -i ./**/*.c	
 
 clean:
-	moon clean
+	NEW_MOON=1 moon clean
 
 check:
-	moon check
+	NEW_MOON=1 moon check
 
 info:
-	moon info
+	NEW_MOON=1 moon info
 
 .PHONY: all build fmt clean check info

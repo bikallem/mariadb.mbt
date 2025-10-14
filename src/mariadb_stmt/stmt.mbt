@@ -19,19 +19,17 @@ priv type MYSQL_STMT
 priv type MYSQL_BIND_ARRAY
 
 ///|
-// typealias @mariadb.MySql
-
-///|
 pub fn Stmt::new(
   mysql : @mariadb.MySql,
   query : String,
   param_types? : Array[ParamType] = [],
 ) -> Stmt raise {
   let mysql_stmt = mysql_stmt_init(mysql)
-  guard mysql_stmt.to() is Some(mysql_stmt) else {
+  guard !mysql_stmt.is_null() else {
     mysql.fail("Failed to initialize MySQL statement")
   }
-  let query_bytes = @encoding.encode(encoding=UTF8, query)
+  let mysql_stmt : MYSQL_STMT = mysql_stmt.unsafe_cast()
+  let query_bytes = @encoding/utf8.encode(query)
   guard mysql_stmt_prepare(mysql_stmt, query_bytes, query_bytes.length()) == 0 else {
     mysql_stmt.fail("Failed to prepare MySQL statement")
   }
@@ -52,16 +50,17 @@ pub fn Stmt::new(
     )
   }
   let mysql_bind = param_types_to_mysql_types_sizes(param_types)
-  guard moonbit_stmt_make_binds(
-      param_binds_count,
-      mysql_bind.sizes,
-      mysql_bind.types,
-      mysql_bind.unsigned,
-    ).to()
-    is Some(param_binds) else {
+  let param_binds = stmt_make_binds(
+    param_binds_count,
+    mysql_bind.sizes,
+    mysql_bind.types,
+    mysql_bind.unsigned,
+  )
+  guard !param_binds.is_null() else {
     mysql_stmt_close(mysql_stmt)
     fail("Failed to create MySQL params bind array")
   }
+  let param_binds : MYSQL_BIND_ARRAY = param_binds.unsafe_cast()
   guard mysql_stmt_bind_param(mysql_stmt, param_binds) == 0 else {
     mysql_stmt_close(mysql_stmt)
     moonbit_free_binds(param_binds, param_binds_count)
@@ -165,11 +164,8 @@ fn param_types_to_mysql_types_sizes(param_types : Array[ParamType]) -> StmtBind 
 }
 
 ///|
-typealias @c.Nullable
-
-///|
 #borrow(mysql)
-extern "c" fn mysql_stmt_init(mysql : @mariadb.MySql) -> Nullable[MYSQL_STMT] = "mysql_stmt_init"
+extern "c" fn mysql_stmt_init(mysql : @mariadb.MySql) -> Pointer = "mysql_stmt_init"
 
 ///|
 #borrow(query)
@@ -184,12 +180,12 @@ extern "c" fn mysql_stmt_param_count(stmt : MYSQL_STMT) -> UInt = "mysql_stmt_pa
 
 ///|
 #borrow(sizes, types, unsigned)
-extern "c" fn moonbit_stmt_make_binds(
+extern "c" fn stmt_make_binds(
   columns_count : UInt,
   sizes : FixedArray[UInt],
   types : FixedArray[UInt],
   unsigned : FixedArray[Bool],
-) -> Nullable[MYSQL_BIND_ARRAY] = "moonbit_stmt_make_binds"
+) -> Pointer = "moonbit_stmt_make_binds"
 
 ///|
 extern "c" fn mysql_stmt_bind_param(
@@ -221,15 +217,14 @@ pub fn Stmt::execute(
   }
   let result_binds = if result_binds_count > 0 {
     let mysql_bind = param_types_to_mysql_types_sizes(result_column_types)
-    guard moonbit_stmt_make_binds(
-        result_binds_count,
-        mysql_bind.sizes,
-        mysql_bind.types,
-        mysql_bind.unsigned,
-      ).to()
-      is Some(binds) else {
-      None
-    }
+    let binds = stmt_make_binds(
+      result_binds_count,
+      mysql_bind.sizes,
+      mysql_bind.types,
+      mysql_bind.unsigned,
+    )
+    guard !binds.is_null() else { None }
+    let binds : MYSQL_BIND_ARRAY = binds.unsafe_cast()
     guard mysql_stmt_bind_result(self.mysql_stmt, binds) == 0 else {
       moonbit_free_binds(binds, result_binds_count)
       self.mysql_stmt.fail("Failed to bind result set")

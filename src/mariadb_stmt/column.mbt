@@ -35,7 +35,7 @@ pub impl Column for Double with to(value : Bytes) -> Double {
 
 ///|
 pub impl Column for String with to(value : Bytes) -> String {
-  @encoding.decode_lossy(encoding=UTF8, value)
+  @encoding/utf8.decode_lossy(value)
 }
 
 ///|

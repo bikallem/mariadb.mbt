@@ -70,7 +70,7 @@ pub impl ParamValue for String with set_value(
   stmt : Stmt,
   index : Int,
 ) -> Unit {
-  let bytes = @encoding.encode(encoding=UTF8, self)
+  let bytes = @encoding/utf8.encode(self)
   stmt.set_param_value(index, bytes, bytes.length().reinterpret_as_uint())
 }
 

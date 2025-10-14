@@ -3,9 +3,7 @@
         "mariadb.c"
     ],
     "import": [
-        "tonyfettes/encoding",
-        "tonyfettes/c",
-        "bikallem/mariadb/internal/ffi"
+        "bikallem/cffi"
     ],
     "supported-targets": [
         "native",

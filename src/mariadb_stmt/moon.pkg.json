@@ -2,10 +2,8 @@
     "native-stub": [
         "mariadb_stmt.c"
     ],
-    "import": [
-        "tonyfettes/encoding",
-        "tonyfettes/c",
+    "import": [        
         "bikallem/mariadb",
-        "bikallem/mariadb/internal/ffi"
+        "bikallem/cffi"        
     ]
 }

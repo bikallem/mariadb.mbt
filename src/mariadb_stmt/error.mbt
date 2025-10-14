@@ -14,7 +14,8 @@ fn StmtError::new(
   err_msg : String,
   loc~ : SourceLoc,
 ) -> StmtError {
-  let error = @ffi.moonbit_string(mysql_stmt_error(mysql_stmt))
+  let error = mysql_stmt_error(mysql_stmt).to_bytes()
+    |> @encoding/utf8.decode_lossy(_)
   StmtError((err_msg, mysql_stmt_errno(mysql_stmt), error, loc))
 }
 
@@ -22,4 +23,4 @@ fn StmtError::new(
 extern "c" fn mysql_stmt_errno(stmt : MYSQL_STMT) -> UInt = "mysql_stmt_errno"
 
 ///|
-extern "c" fn mysql_stmt_error(stmt : MYSQL_STMT) -> @ffi.CString = "mysql_stmt_error"
+extern "c" fn mysql_stmt_error(stmt : MYSQL_STMT) -> Pointer = "mysql_stmt_error"
