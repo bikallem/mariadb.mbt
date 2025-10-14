@@ -1,0 +1,9 @@
+{
+    "is-main": true,
+    "import": [
+        "bikallem/mariadb"
+    ],
+    "supported-targets": [
+        "native"
+    ]
+}
