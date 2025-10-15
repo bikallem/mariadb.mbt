@@ -119,13 +119,13 @@ extern "c" fn mysql_real_escape_string(
 
 ///|
 /// Executes the given query and returns the result.
-pub fn MySql::execute(self : Self, query : String) -> QueryResult raise {
+pub fn MySql::execute(self : Self, query : String) -> MySqlRes raise {
   let bytes_query = @encoding/utf8.encode(query)
   let len = bytes_query.length().reinterpret_as_uint()
   guard mysql_real_query(self, bytes_query, len) == 0 else {
     self.fail("Failed to execute query '\{query}'")
   }
-  QueryResult::new(self)
+  MySqlRes::new(self)
 }
 
 ///|

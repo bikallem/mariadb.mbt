@@ -21,7 +21,7 @@ debug: clean
 
 asan: clean
 	MOON_CC="clang -g -O1 -fsanitize=address -fno-omit-frame-pointer" moon build
-	ASAN_OPTIONS="verbosity=3:detect_leaks=1:log_path=asan.log:atexit=1" \
+	ASAN_OPTIONS="detect_leaks=1:log_path=asan.log:atexit=1" \
 	./target/native/release/build/examples/contacts/contacts.exe
 
 valgrind: clean

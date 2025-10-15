@@ -1,6 +1,7 @@
 {
     "native-stub": [
-        "mariadb.c"
+        "mysql.c",
+        "mysql_res.c"
     ],
     "import": [
         "bikallem/cffi"

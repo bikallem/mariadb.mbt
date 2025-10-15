@@ -30,7 +30,6 @@ fn count_contacts(mariadb : MySql) -> Unit raise {
   let result = mariadb.execute(query)
   let contacts_count = @strconv.parse_int(result.iter().nth(0).unwrap()[0])
   guard contacts_count == 200 else { fail("count_contacts() failed") }
-  result.free_result()
   println("✓ Successfully retrieved 200 contacts from Contacts DB!")
 }
 
@@ -52,5 +51,4 @@ fn contacts_by_industry(mariadb : MySql, industry? : String) -> Unit raise {
     let last_name = row[2]
     println("- \{id}: \{first_name} \{last_name}")
   }
-  result.free_result()
 }
