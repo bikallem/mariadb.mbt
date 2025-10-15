@@ -25,7 +25,12 @@ asan: clean
 	./target/native/release/build/examples/contacts/contacts.exe
 
 valgrind: clean
-	MOON_CC="clang -g -O1 -fno-omit-frame-pointer" moon build
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./target/native/release/build/examples/contacts/contacts.exe
+	MOON_CC="clang -g -O1 -fno-omit-frame-pointer" moon build	
+	valgrind --leak-check=full \
+	--show-leak-kinds=all \
+	--track-origins=yes \
+	--log-file=valgrind.log \
+	--track-origins=yes \
+	./target/native/release/build/examples/contacts/contacts.exe
 
 .PHONY: all build fmt clean check info debug asan valgrind
