@@ -47,17 +47,14 @@ moonbit_mariadb_connect_via_tcp_socket(moonbit_mariadb_mysql_t* mysql_t,
                                        uint32_t client_flag)
 {
 
-  if (!mysql_real_connect(mysql_t->mysql,
-                          host,
-                          user,
-                          password,
-                          database,
-                          port,
-                          NULL,
-                          client_flag)) {
-    return 0; // false
-  }
-  return 1; // true
+  return mysql_real_connect(mysql_t->mysql,
+                            host,
+                            user,
+                            password,
+                            database,
+                            port,
+                            NULL,
+                            client_flag) != NULL;
 }
 
 MOONBIT_FFI_EXPORT
@@ -69,17 +66,14 @@ moonbit_mariadb_connect_via_unix_socket(moonbit_mariadb_mysql_t* mysql_t,
                                         const char* database,
                                         uint32_t client_flag)
 {
-  if (!mysql_real_connect(mysql_t->mysql,
-                          NULL,
-                          user,
-                          password,
-                          database,
-                          0,
-                          unix_socket,
-                          client_flag)) {
-    return 0; // false
-  }
-  return 1; // true
+  return mysql_real_connect(mysql_t->mysql,
+                            NULL,
+                            user,
+                            password,
+                            database,
+                            0,
+                            unix_socket,
+                            client_flag) != NULL;
 }
 
 MOONBIT_FFI_EXPORT
