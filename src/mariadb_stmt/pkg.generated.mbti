@@ -42,24 +42,24 @@ fn StmtResult::fetch(Self) -> Result[StmtFetchResult, StmtError]
 fn StmtResult::iter(Self) -> Iter[Result[StmtResultRow, StmtError]]
 
 type StmtResultRow
-fn[T : Column] StmtResultRow::get(Self, Int) -> T?
+fn[T : ColumnValue] StmtResultRow::get(Self, Int) -> T?
 #alias("_[_]")
-fn[T : Column] StmtResultRow::unsafe_get(Self, Int) -> T
+fn[T : ColumnValue] StmtResultRow::unsafe_get(Self, Int) -> T
 
 // Type aliases
 
 // Traits
-pub trait Column {
+pub trait ColumnValue {
   to(Bytes) -> Self
 }
-impl Column for Bool
-impl Column for Int
-impl Column for Int64
-impl Column for UInt
-impl Column for Float
-impl Column for Double
-impl Column for String
-impl Column for Bytes
+impl ColumnValue for Bool
+impl ColumnValue for Int
+impl ColumnValue for Int64
+impl ColumnValue for UInt
+impl ColumnValue for Float
+impl ColumnValue for Double
+impl ColumnValue for String
+impl ColumnValue for Bytes
 
 pub trait ParamValue {
   set_value(Self, Stmt, Int) -> Unit
