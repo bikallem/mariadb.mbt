@@ -14,9 +14,4 @@ typedef struct
   MYSQL_RES* res;
 } moonbit_mariadb_mysql_res_t;
 
-typedef struct
-{
-  MYSQL_ROW* row;
-} moonbit_mariadb_mysql_row_t;
-
 #endif // MOONBIT_MARIADB_H
