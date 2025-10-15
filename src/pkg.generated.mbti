@@ -45,11 +45,22 @@ fn MySqlRes::iter(Self) -> Iter[MySqlRow]
 fn MySqlRes::num_fields(Self) -> UInt
 
 type MySqlRow
-fn MySqlRow::get(Self, Int) -> String?
+fn[T : Column] MySqlRow::get(Self, Int) -> T?
 #alias("_[_]")
-fn MySqlRow::unsafe_get(Self, Int) -> String
+fn[T : Column] MySqlRow::unsafe_get(Self, Int) -> T raise
 
 // Type aliases
 
 // Traits
+pub trait Column {
+  to(Bytes) -> Self raise
+}
+impl Column for Bool
+impl Column for Int
+impl Column for Int64
+impl Column for UInt
+impl Column for Float
+impl Column for Double
+impl Column for String
+impl Column for Bytes
 

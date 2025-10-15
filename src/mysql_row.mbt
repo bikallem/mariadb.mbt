@@ -13,11 +13,14 @@ extern "c" fn moonbit_row_column_values(
 
 ///|
 #alias("_[_]")
-pub fn MySqlRow::unsafe_get(self : MySqlRow, index : Int) -> String {
-  @encoding/utf8.decode_lossy(self.0[index])
+pub fn[T : ColumnValue] MySqlRow::unsafe_get(
+  self : MySqlRow,
+  index : Int,
+) -> T raise {
+  ColumnValue::to(self.0[index])
 }
 
 ///|
-pub fn MySqlRow::get(self : MySqlRow, index : Int) -> String? {
-  self.0.get(index).map(v => @encoding/utf8.decode_lossy(v))
+pub fn[T : ColumnValue] MySqlRow::get(self : MySqlRow, index : Int) -> T? {
+  self.0.get(index).bind(v => Some(ColumnValue::to(v)) catch { _ => None })
 }

@@ -29,7 +29,7 @@ fn main {
 fn count_contacts(mariadb : MySql) -> Unit raise {
   let query = "SELECT count(id) FROM contacts"
   let result = mariadb.execute(query)
-  let contacts_count = @strconv.parse_int(result.iter().nth(0).unwrap()[0])
+  let contacts_count = (result.iter().nth(0).unwrap()[0] : Int)
   guard contacts_count == 200 else { fail("count_contacts() failed") }
 }
 
@@ -46,9 +46,9 @@ fn contacts_by_industry(mariadb : MySql, industry? : String) -> Unit raise {
   }
   let result = mariadb.execute(query)
   for row in result.iter() {
-    let id = row[0]
-    let first_name = row[1]
-    let last_name = row[2]
+    let id = (row[0] : Int)
+    let first_name = (row[1] : String)
+    let last_name = (row[2] : String)
     println("- \{id}: \{first_name} \{last_name}")
   }
 }
