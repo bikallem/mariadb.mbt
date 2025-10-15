@@ -1,1 +1,2 @@
-
+///|
+using @mariadb {type MySql}

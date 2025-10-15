@@ -1,7 +1,4 @@
 ///|
-using @mariadb {type MySql}
-
-///|
 const MARIADB_SOCKET = "MARIADB_SOCKET"
 
 ///|
