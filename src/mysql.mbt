@@ -3,45 +3,48 @@
 type MySql
 
 ///|
-/// Connect to MySQL with the given credentials. It sets the resulting connection 
-/// character set to `utf8mb4`.
-pub fn connect(
+pub fn connect_via_tcp_socket(
   host~ : String,
-  port? : UInt,
+  port~ : UInt,
   user~ : String,
   password~ : String,
   database~ : String,
-  unix_socket? : String,
-  client_flag? : ClientFlag = 0,
+  client_flag? : UInt = 0U,
 ) -> MySql raise {
-  let mysql = mysql_init(Pointer::null())
-  guard !mysql.is_null() else { fail("Failed to initialize MySQL connection") }
-  let mysql : MySql = mysql.unsafe_cast()
+  let mysql = MySql::init()
   let host = @encoding/utf8.encode(host)
   let user = @encoding/utf8.encode(user)
   let password = @encoding/utf8.encode(password)
   let database = @encoding/utf8.encode(database)
-  let unix_socket : Bytes = match unix_socket {
-    Some(socket) => @encoding/utf8.encode(socket)
-    None => Bytes::make(0, b'0')
-  }
-  let conn = mysql_real_connect(
+  let mysql = mariadb_connect_via_tcp_socket(
     mysql,
-    host,
-    user,
-    password,
-    database,
-    port.unwrap_or(3306),
-    unix_socket,
-    client_flag.inner(),
+    host~,
+    port~,
+    user~,
+    password~,
+    database~,
+    client_flag~,
   )
-  guard !conn.is_null() else {
-    mysql.fail("Failed to connect to MariaDB database")
-  }
-  if mysql_set_character_set(mysql, b"utf8mb4") != 0 {
-    mysql.fail("Failed to set character set to 'utf8mb4'")
-  }
-  conn.unsafe_cast()
+  mysql.to_external()
+}
+
+///|
+#borrow(host, user, password, database)
+extern "c" fn mariadb_connect_via_tcp_socket(
+  mysql : MySql,
+  host~ : Bytes,
+  port~ : UInt,
+  user~ : Bytes,
+  password~ : Bytes,
+  database~ : Bytes,
+  client_flag~ : UInt,
+) -> Pointer = "moonbit_mariadb_connect_via_tcp_socket"
+
+///|
+fn MySql::init() -> MySql raise {
+  let mysql = mysql_init(Pointer::null())
+  guard !mysql.is_null() else { fail("Failed to initialize MySQL connection") }
+  mysql.to_external()
 }
 
 ///|
@@ -49,21 +52,43 @@ pub fn connect(
 extern "c" fn mysql_init(mysql : Pointer) -> Pointer = "mysql_init"
 
 ///|
-#borrow(host, user, passwd, db, unix_socket)
-extern "c" fn mysql_real_connect(
+pub fn connect_via_unix_socket(
+  unix_socket~ : String,
+  user~ : String,
+  password~ : String,
+  database~ : String,
+  client_flag? : UInt = 0U,
+) -> MySql raise {
+  let mysql = MySql::init()
+  let unix_socket = @encoding/utf8.encode(unix_socket)
+  let user = @encoding/utf8.encode(user)
+  let password = @encoding/utf8.encode(password)
+  let database = @encoding/utf8.encode(database)
+  let mysql = mariadb_connect_via_unix_socket(
+    mysql,
+    unix_socket,
+    user~,
+    password~,
+    database~,
+    client_flag~,
+  )
+  mysql.to_external()
+}
+
+///|
+#borrow(unix_socket, user, password, database)
+extern "c" fn mariadb_connect_via_unix_socket(
   mysql : MySql,
-  host : Bytes,
-  user : Bytes,
-  passwd : Bytes,
-  db : Bytes,
-  port : UInt,
   unix_socket : Bytes,
-  client_flag : UInt64,
-) -> Pointer = "mysql_real_connect"
+  user~ : Bytes,
+  password~ : Bytes,
+  database~ : Bytes,
+  client_flag~ : UInt,
+) -> Pointer = "moonbit_mariadb_connect_via_unix_socket"
 
 ///|
 #borrow(cs)
-extern "c" fn mysql_set_character_set(mysql : MySql, cs : Bytes) -> Int = "mysql_set_character_set"
+pub extern "c" fn MySql::set_character_set(self : MySql, cs : Bytes) -> Int = "mysql_set_character_set"
 
 ///|
 pub fn MySql::real_escape_string(self : Self, s : String) -> String {

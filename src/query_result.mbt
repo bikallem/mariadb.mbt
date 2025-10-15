@@ -12,7 +12,7 @@ priv type MYSQL_RES
 fn QueryResult::new(mysql : MySql) -> QueryResult? {
   let res = mysql_store_result(mysql)
   guard !res.is_null() else { return None }
-  let res : MYSQL_RES = res.unsafe_cast()
+  let res : MYSQL_RES = res.to_external()
   let column_count = mysql_num_fields(res)
   Some(QueryResult::{ res, column_count })
 }
@@ -27,7 +27,7 @@ extern "c" fn mysql_num_fields(res : MYSQL_RES) -> UInt = "mysql_num_fields"
 pub fn QueryResult::fetch_row(self : Self) -> QueryResultRow? {
   let row = mysql_fetch_row(self.res)
   guard !row.is_null() else { return None }
-  let row : MYSQL_ROW = row.unsafe_cast()
+  let row : MYSQL_ROW = row.to_external()
   Some(QueryResultRow::new(row, self.column_count))
 }
 

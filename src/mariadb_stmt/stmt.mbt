@@ -28,7 +28,7 @@ pub fn Stmt::new(
   guard !mysql_stmt.is_null() else {
     mysql.fail("Failed to initialize MySQL statement")
   }
-  let mysql_stmt : MYSQL_STMT = mysql_stmt.unsafe_cast()
+  let mysql_stmt : MYSQL_STMT = mysql_stmt.to_external()
   let query_bytes = @encoding/utf8.encode(query)
   guard mysql_stmt_prepare(mysql_stmt, query_bytes, query_bytes.length()) == 0 else {
     mysql_stmt.fail("Failed to prepare MySQL statement")
@@ -60,7 +60,7 @@ pub fn Stmt::new(
     mysql_stmt_close(mysql_stmt)
     fail("Failed to create MySQL params bind array")
   }
-  let param_binds : MYSQL_BIND_ARRAY = param_binds.unsafe_cast()
+  let param_binds : MYSQL_BIND_ARRAY = param_binds.to_external()
   guard mysql_stmt_bind_param(mysql_stmt, param_binds) == 0 else {
     mysql_stmt_close(mysql_stmt)
     moonbit_free_binds(param_binds, param_binds_count)
@@ -224,7 +224,7 @@ pub fn Stmt::execute(
       mysql_bind.unsigned,
     )
     guard !binds.is_null() else { None }
-    let binds : MYSQL_BIND_ARRAY = binds.unsafe_cast()
+    let binds : MYSQL_BIND_ARRAY = binds.to_external()
     guard mysql_stmt_bind_result(self.mysql_stmt, binds) == 0 else {
       moonbit_free_binds(binds, result_binds_count)
       self.mysql_stmt.fail("Failed to bind result set")

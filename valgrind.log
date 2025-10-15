@@ -1,0 +1,79 @@
+==1029443== Memcheck, a memory error detector
+==1029443== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==1029443== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
+==1029443== Command: ./target/native/release/build/examples/contacts/contacts.exe
+==1029443== Parent PID: 1029362
+==1029443== 
+==1029443== 
+==1029443== HEAP SUMMARY:
+==1029443==     in use at exit: 265 bytes in 5 blocks
+==1029443==   total heap usage: 6,468 allocs, 6,463 frees, 840,298 bytes allocated
+==1029443== 
+==1029443== 5 bytes in 1 blocks are still reachable in loss record 1 of 5
+==1029443==    at 0x4854810: malloc (in /nix/store/gpwlphwvjxwr0ms8scs4nsjvvfmvg9si-valgrind-3.25.1/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1029443==    by 0x4A6BE9E: strdup (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4973C6E: get_default_configuration_dirs (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4977D59: mysql_once_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4A58FFA: __pthread_once_slow.isra.0 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4A59070: pthread_once@@GLIBC_2.34 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4977A36: mysql_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x40035CA: $$bikallem$mariadb$MySql$$init (contacts.c:1869)
+==1029443==    by 0x4003274: $bikallem$mariadb$connect_via_unix_socket$inner (contacts.c:1803)
+==1029443==    by 0x40066CE: main (contacts.c:4827)
+==1029443== 
+==1029443== 11 bytes in 1 blocks are still reachable in loss record 2 of 5
+==1029443==    at 0x4854810: malloc (in /nix/store/gpwlphwvjxwr0ms8scs4nsjvvfmvg9si-valgrind-3.25.1/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1029443==    by 0x4A6BE9E: strdup (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4973C97: get_default_configuration_dirs (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4977D59: mysql_once_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4A58FFA: __pthread_once_slow.isra.0 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4A59070: pthread_once@@GLIBC_2.34 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4977A36: mysql_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x40035CA: $$bikallem$mariadb$MySql$$init (contacts.c:1869)
+==1029443==    by 0x4003274: $bikallem$mariadb$connect_via_unix_socket$inner (contacts.c:1803)
+==1029443==    by 0x40066CE: main (contacts.c:4827)
+==1029443== 
+==1029443== 41 bytes in 1 blocks are still reachable in loss record 3 of 5
+==1029443==    at 0x4854810: malloc (in /nix/store/gpwlphwvjxwr0ms8scs4nsjvvfmvg9si-valgrind-3.25.1/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1029443==    by 0x4A6BE9E: strdup (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4973CFB: get_default_configuration_dirs (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4977D59: mysql_once_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4A58FFA: __pthread_once_slow.isra.0 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4A59070: pthread_once@@GLIBC_2.34 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4977A36: mysql_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x40035CA: $$bikallem$mariadb$MySql$$init (contacts.c:1869)
+==1029443==    by 0x4003274: $bikallem$mariadb$connect_via_unix_socket$inner (contacts.c:1803)
+==1029443==    by 0x40066CE: main (contacts.c:4827)
+==1029443== 
+==1029443== 56 bytes in 1 blocks are still reachable in loss record 4 of 5
+==1029443==    at 0x485C2B1: calloc (in /nix/store/gpwlphwvjxwr0ms8scs4nsjvvfmvg9si-valgrind-3.25.1/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1029443==    by 0x49739E9: get_default_configuration_dirs (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4977D59: mysql_once_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4A58FFA: __pthread_once_slow.isra.0 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4A59070: pthread_once@@GLIBC_2.34 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4977A36: mysql_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x40035CA: $$bikallem$mariadb$MySql$$init (contacts.c:1869)
+==1029443==    by 0x4003274: $bikallem$mariadb$connect_via_unix_socket$inner (contacts.c:1803)
+==1029443==    by 0x40066CE: main (contacts.c:4827)
+==1029443== 
+==1029443== 152 bytes in 1 blocks are still reachable in loss record 5 of 5
+==1029443==    at 0x4854810: malloc (in /nix/store/gpwlphwvjxwr0ms8scs4nsjvvfmvg9si-valgrind-3.25.1/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==1029443==    by 0x497F75E: ma_init_alloc_root (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4992D98: mysql_client_plugin_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4977D6E: mysql_once_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x4A58FFA: __pthread_once_slow.isra.0 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4A59070: pthread_once@@GLIBC_2.34 (in /nix/store/qhw0sp183mqd04x5jp75981kwya64npv-glibc-2.40-66/lib/libc.so.6)
+==1029443==    by 0x4977A36: mysql_init (in /nix/store/0rkgxzsm2zyhaamf39khkg3y3hs3ri51-mariadb-connector-c-3.3.5/lib/mariadb/libmariadb.so.3)
+==1029443==    by 0x40035CA: $$bikallem$mariadb$MySql$$init (contacts.c:1869)
+==1029443==    by 0x4003274: $bikallem$mariadb$connect_via_unix_socket$inner (contacts.c:1803)
+==1029443==    by 0x40066CE: main (contacts.c:4827)
+==1029443== 
+==1029443== LEAK SUMMARY:
+==1029443==    definitely lost: 0 bytes in 0 blocks
+==1029443==    indirectly lost: 0 bytes in 0 blocks
+==1029443==      possibly lost: 0 bytes in 0 blocks
+==1029443==    still reachable: 265 bytes in 5 blocks
+==1029443==         suppressed: 0 bytes in 0 blocks
+==1029443== 
+==1029443== For lists of detected and suppressed errors, rerun with: -s
+==1029443== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

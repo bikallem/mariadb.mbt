@@ -32,6 +32,7 @@
             export MARIADB_DATA="$MARIADB_HOME/data";
             export MARIADB_SOCKET="$MARIADB_HOME/mariadb.sock";
             export MARIADB_PID="$MARIADB_HOME/mariadb.pid";
+            export MARIADB_PORT="3307";
           '';
 
           buildInputs = with pkgs; [
@@ -46,6 +47,8 @@
             llvmPackages.clang
             llvmPackages.lldb
             llvmPackages.llvm
+            gdb
+            gcc15
             valgrind
           ];
 

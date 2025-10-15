@@ -16,21 +16,12 @@ if ! command -v mysql &> /dev/null; then
 fi
 
 # Get database credentials
-read -p "Enter MySQL/MariaDB host [localhost]: " DB_HOST
-DB_HOST=${DB_HOST:-localhost}
-
-read -p "Enter MySQL/MariaDB user [root]: " DB_USER
-DB_USER=${DB_USER:-root}
-
-# read -sp "Enter MySQL/MariaDB password: " DB_PASS
-# echo ""
-
-# Get script directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DB_HOST=localhost
+DB_USER=root
 
 echo ""
 echo "Step 1: Creating database schema..."
-mariadb-client -h "$DB_HOST" -u "$DB_USER" < "$SCRIPT_DIR/schema.sql"
+mariadb-client -h "$DB_HOST" -u "$DB_USER" < "sql/schema.sql"
 
 if [ $? -eq 0 ]; then
     echo "✓ Schema created successfully"
@@ -41,7 +32,10 @@ fi
 
 echo ""
 echo "Step 2: Loading data from CSV files..."
-mariadb-client -h "$DB_HOST" -u "$DB_USER" --local-infile=1 < "$SCRIPT_DIR/load_data.sql"
+# Change to sql directory so relative paths in load_data.sql work
+cd sql
+mariadb-client -h "$DB_HOST" -u "$DB_USER" --local-infile=1 < "load_data.sql"
+cd ..
 
 if [ $? -eq 0 ]; then
     echo "✓ Data loaded successfully"

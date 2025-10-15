@@ -33,6 +33,7 @@ The database consists of 5 tables:
 - `contacts.csv` - 200 sample contacts with realistic data
 - `companies.csv` - 20 sample companies across various industries
 - `load_data.sql` - SQL script to load CSV data and generate related records
+- `user.sql` - Creates a dedicated database user for contacts_db
 - `setup.sh` - Automated setup script (bash)
 - `README.md` - This file
 
@@ -55,17 +56,42 @@ The script will prompt you for:
 
 1. Create the schema:
 ```bash
-mysql -u root -p < schema.sql
+mysql -u root -p < sql/schema.sql
 ```
 
-2. Load the data:
+2. Load the data (must run from sql/ directory for relative paths):
 ```bash
+cd sql
 mysql -u root -p --local-infile=1 < load_data.sql
+cd ..
+```
+
+3. (Optional) Create a dedicated database user:
+```bash
+mysql -u root -p < sql/user.sql
 ```
 
 **Note:** If you get an error about `local-infile`, you may need to:
 - Enable it in your MariaDB/MySQL configuration
 - Or update the `load_data.sql` to use absolute paths to the CSV files
+
+### Security: Database User
+
+The `user.sql` script creates a dedicated user for the contacts database:
+
+- **Username:** `contacts_user`
+- **Password:** `contacts_password` (⚠️ **CHANGE THIS IN PRODUCTION!**)
+- **Privileges:** Full access to `contacts_db` only
+
+To use the dedicated user:
+```bash
+mysql -u contacts_user -p contacts_db
+```
+
+To change the password after creation:
+```sql
+ALTER USER 'contacts_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+```
 
 ## Verification
 

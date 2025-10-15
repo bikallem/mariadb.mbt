@@ -1,9 +1,15 @@
 {
     "is-main": true,
     "import": [
-        "bikallem/mariadb"
+        "bikallem/mariadb",
+        "moonbitlang/x/sys"
     ],
     "supported-targets": [
         "native"
-    ]
+    ],
+    "link": {
+        "native": {
+            "cc-link-flags": "-lmariadb"
+        }
+    }
 }

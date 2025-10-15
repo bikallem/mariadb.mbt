@@ -4,7 +4,8 @@
   "deps": {
     "bikallem/cffi": {
       "path": "../cffi"
-    }
+    },
+    "moonbitlang/x": "0.4.34"
   },
   "readme": "README.md",
   "repository": "github.com/bikallem/mariadb.mbt",
@@ -15,6 +16,6 @@
     "mysql"
   ],
   "description": "MariaDB/MySQL client library for Moonbit",
-  "preferred-target": "native",
-  "source": "src"
+  "source": "src",
+  "preferred-target": "native"
 }

@@ -1,14 +1,21 @@
 -- Load Data Script for Contacts Database
 -- This script loads CSV data into the contacts database
 -- Make sure to run schema.sql first
+--
+-- NOTE: LOAD DATA LOCAL INFILE paths are relative to where the mysql client is run
+-- Run this script from the sql/ directory:
+--   cd src/examples/contacts/sql
+--   mysql -u root -p --local-infile=1 < load_data.sql
+--
+-- Or use absolute paths if running from elsewhere
 
 USE contacts_db;
 
 -- Disable foreign key checks for faster loading
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Load contacts from CSV
-LOAD DATA LOCAL INFILE '/home/blem/projects/mariadb.mbt/src/examples/contacts/contacts.csv'
+-- Load contacts from CSV (relative path assumes running from sql/ directory)
+LOAD DATA LOCAL INFILE 'contacts.csv'
 INTO TABLE contacts
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -17,7 +24,7 @@ IGNORE 1 ROWS
 (first_name, last_name, email, phone, date_of_birth);
 
 -- Load companies from CSV
-LOAD DATA LOCAL INFILE '/home/blem/projects/mariadb.mbt/src/examples/contacts/companies.csv'
+LOAD DATA LOCAL INFILE 'companies.csv'
 INTO TABLE companies
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
