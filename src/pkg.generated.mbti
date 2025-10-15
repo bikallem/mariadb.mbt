@@ -2,20 +2,6 @@
 package "bikallem/mariadb"
 
 // Values
-let client_compress : ClientFlag
-
-let client_found_rows : ClientFlag
-
-let client_ignore_space : ClientFlag
-
-let client_local_files : ClientFlag
-
-let client_multi_results : ClientFlag
-
-let client_multi_statements : ClientFlag
-
-let client_no_schema : ClientFlag
-
 fn connect_via_tcp_socket(host~ : String, port~ : UInt, user~ : String, password~ : String, database~ : String, client_flag? : UInt) -> MySql raise
 
 fn connect_via_unix_socket(unix_socket~ : String, user~ : String, password~ : String, database~ : String, client_flag? : UInt) -> MySql raise
@@ -27,10 +13,6 @@ fn Err::to_string(Self) -> String // from trait `Show`
 impl Show for Err
 
 // Types and methods
-type ClientFlag
-fn ClientFlag::lor(Self, Self) -> Self // from trait `BitOr`
-impl BitOr for ClientFlag
-
 type MySql
 fn MySql::affected_rows(Self) -> UInt
 fn MySql::execute(Self, String) -> MySqlRes raise
