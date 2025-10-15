@@ -1,7 +1,8 @@
 {
     "native-stub": [
         "mysql.c",
-        "mysql_res.c"
+        "mysql_res.c",
+        "mysql_row.c"
     ],
     "import": [
         "bikallem/cffi"

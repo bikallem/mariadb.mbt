@@ -33,21 +33,21 @@ impl BitOr for ClientFlag
 
 type MySql
 fn MySql::affected_rows(Self) -> UInt
-fn MySql::execute(Self, String) -> QueryResult raise
+fn MySql::execute(Self, String) -> MySqlRes raise
 #callsite(autofill(loc))
 fn[T] MySql::fail(Self, String, loc~ : SourceLoc) -> T raise
 fn MySql::real_escape_string(Self, String) -> String
 fn MySql::set_character_set(Self, Bytes) -> Int
 
-type QueryResult
-fn QueryResult::fetch_row(Self) -> QueryResultRow?
-fn QueryResult::free_result(Self) -> Unit
-fn QueryResult::iter(Self) -> Iter[QueryResultRow]
+type MySqlRes
+fn MySqlRes::fetch_row(Self) -> MySqlRow?
+fn MySqlRes::iter(Self) -> Iter[MySqlRow]
+fn MySqlRes::num_fields(Self) -> UInt
 
-type QueryResultRow
-fn QueryResultRow::get(Self, Int) -> String?
+type MySqlRow
+fn MySqlRow::get(Self, Int) -> String?
 #alias("_[_]")
-fn QueryResultRow::unsafe_get(Self, Int) -> String
+fn MySqlRow::unsafe_get(Self, Int) -> String
 
 // Type aliases
 
