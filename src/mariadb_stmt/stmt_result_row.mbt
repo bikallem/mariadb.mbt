@@ -2,7 +2,8 @@
 struct StmtResultRow(FixedArray[Bytes])
 
 ///|
-pub fn[T : Column] StmtResultRow::op_get(
+#alias("_[_]")
+pub fn[T : Column] StmtResultRow::unsafe_get(
   self : StmtResultRow,
   index : Int,
 ) -> T {
