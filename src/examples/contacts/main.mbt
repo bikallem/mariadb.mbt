@@ -13,6 +13,7 @@ fn main {
     )
     println("✓ Connected to MariaDB successfully!")
     count_contacts(mariadb)
+    println("✓ Successfully counted 200 contacts from Contacts DB!")
     contacts_by_industry(mariadb, industry="Technology")
     println(
       "✓ Successfully retrieved all contacts in the Technology industry!",
@@ -30,7 +31,6 @@ fn count_contacts(mariadb : MySql) -> Unit raise {
   let result = mariadb.execute(query)
   let contacts_count = @strconv.parse_int(result.iter().nth(0).unwrap()[0])
   guard contacts_count == 200 else { fail("count_contacts() failed") }
-  println("✓ Successfully retrieved 200 contacts from Contacts DB!")
 }
 
 ///|
