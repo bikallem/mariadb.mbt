@@ -47,7 +47,8 @@ fn QueryResult::iter(Self) -> Iter[QueryResultRow]
 
 type QueryResultRow
 fn QueryResultRow::get(Self, Int) -> String?
-fn QueryResultRow::op_get(Self, Int) -> String
+#alias("_[_]")
+fn QueryResultRow::unsafe_get(Self, Int) -> String
 
 // Type aliases
 

@@ -17,7 +17,8 @@ extern "c" fn moonbit_row_column_values(
 ) -> FixedArray[Bytes] = "moonbit_row_column_values"
 
 ///|
-pub fn QueryResultRow::op_get(self : QueryResultRow, index : Int) -> String {
+#alias("_[_]")
+pub fn QueryResultRow::unsafe_get(self : QueryResultRow, index : Int) -> String {
   @encoding/utf8.decode_lossy(self.0[index])
 }
 
