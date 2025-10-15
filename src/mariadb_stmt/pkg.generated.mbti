@@ -43,7 +43,8 @@ fn StmtResult::iter(Self) -> Iter[Result[StmtResultRow, StmtError]]
 
 type StmtResultRow
 fn[T : Column] StmtResultRow::get(Self, Int) -> T?
-fn[T : Column] StmtResultRow::op_get(Self, Int) -> T
+#alias("_[_]")
+fn[T : Column] StmtResultRow::unsafe_get(Self, Int) -> T
 
 // Type aliases
 
