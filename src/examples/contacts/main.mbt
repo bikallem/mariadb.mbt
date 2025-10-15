@@ -5,20 +5,20 @@ const MARIADB_SOCKET = "MARIADB_SOCKET"
 fn main {
   try {
     let env = @sys.get_env_vars()
-    let _mariadb = @mariadb.connect_via_unix_socket(
+    let mariadb = @mariadb.connect_via_unix_socket(
       unix_socket=env[MARIADB_SOCKET],
       user="contacts_user",
       password="contacts_password",
       database="contacts_db",
     )
     println("✓ Connected to MariaDB successfully!")
-    // count_contacts(mariadb)
-    // contacts_by_industry(mariadb, industry="Technology")
-    // println(
-    //   "✓ Successfully retrieved all contacts in the Technology industry!",
-    // )
-    // contacts_by_industry(mariadb)
-    // println("✓ Successfully retrieved all contacts in all industries!")
+    count_contacts(mariadb)
+    contacts_by_industry(mariadb, industry="Technology")
+    println(
+      "✓ Successfully retrieved all contacts in the Technology industry!",
+    )
+    contacts_by_industry(mariadb)
+    println("✓ Successfully retrieved all contacts in all industries!")
   } catch {
     e => println("✗ Error: \{e}")
   }
@@ -26,19 +26,10 @@ fn main {
 
 ///|
 fn count_contacts(mariadb : MySql) -> Unit raise {
-  let query = "SELECT id, first_name, last_name, email, phone FROM contacts"
+  let query = "SELECT count(id) FROM contacts"
   let result = mariadb.execute(query)
-  let contacts : Array[Json] = []
-  for row in result.iter() {
-    contacts.push({
-      "id": (row[0] : String),
-      "first_name": (row[1] : String),
-      "last_name": (row[2] : String),
-      "email": (row[3] : String),
-      "phone": (row[4] : String),
-    })
-  }
-  guard contacts.length() == 200 else { fail("count_contacts() failed") }
+  let contacts_count = @strconv.parse_int(result.iter().nth(0).unwrap()[0])  
+  guard contacts_count == 200 else { fail("count_contacts() failed") }
   result.free_result()
   println("✓ Successfully retrieved 200 contacts from Contacts DB!")
 }
