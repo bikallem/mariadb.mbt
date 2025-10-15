@@ -5,21 +5,20 @@ const MARIADB_SOCKET = "MARIADB_SOCKET"
 fn main {
   try {
     let env = @sys.get_env_vars()
-    let mariadb = @mariadb.connect_via_unix_socket(
+    let _mariadb = @mariadb.connect_via_unix_socket(
       unix_socket=env[MARIADB_SOCKET],
       user="contacts_user",
       password="contacts_password",
       database="contacts_db",
     )
-    defer mariadb.close()
     println("✓ Connected to MariaDB successfully!")
-    count_contacts(mariadb)
-    contacts_by_industry(mariadb, industry="Technology")
-    println(
-      "✓ Successfully retrieved all contacts in the Technology industry!",
-    )
-    contacts_by_industry(mariadb)
-    println("✓ Successfully retrieved all contacts in all industries!")
+    // count_contacts(mariadb)
+    // contacts_by_industry(mariadb, industry="Technology")
+    // println(
+    //   "✓ Successfully retrieved all contacts in the Technology industry!",
+    // )
+    // contacts_by_industry(mariadb)
+    // println("✓ Successfully retrieved all contacts in all industries!")
   } catch {
     e => println("✗ Error: \{e}")
   }

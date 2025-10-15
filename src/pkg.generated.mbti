@@ -33,7 +33,6 @@ impl BitOr for ClientFlag
 
 type MySql
 fn MySql::affected_rows(Self) -> UInt
-fn MySql::close(Self) -> Unit
 fn MySql::execute(Self, String) -> QueryResult raise
 #callsite(autofill(loc))
 fn[T] MySql::fail(Self, String, loc~ : SourceLoc) -> T raise

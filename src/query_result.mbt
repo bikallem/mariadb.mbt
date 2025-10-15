@@ -18,10 +18,11 @@ fn QueryResult::new(mysql : MySql) -> QueryResult raise {
 }
 
 ///|
-extern "c" fn mysql_store_result(mysql : MySql) -> Pointer = "mysql_store_result"
+#borrow(mysql)
+extern "c" fn mysql_store_result(mysql : MySql) -> Pointer = "moonbit_mariadb_store_result"
 
 ///|
-extern "c" fn mysql_num_fields(res : MYSQL_RES) -> UInt = "mysql_num_fields"
+extern "c" fn mysql_num_fields(res : MYSQL_RES) -> UInt = "moonbit_mariadb_num_fields"
 
 ///|
 pub fn QueryResult::fetch_row(self : Self) -> QueryResultRow? {

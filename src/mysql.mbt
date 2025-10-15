@@ -1,5 +1,4 @@
 ///|
-#external
 type MySql
 
 ///|
@@ -16,7 +15,7 @@ pub fn connect_via_tcp_socket(
   let user = @encoding/utf8.encode(user)
   let password = @encoding/utf8.encode(password)
   let database = @encoding/utf8.encode(database)
-  let mysql = mariadb_connect_via_tcp_socket(
+  guard mariadb_connect_via_tcp_socket(
     mysql,
     host~,
     port~,
@@ -24,12 +23,14 @@ pub fn connect_via_tcp_socket(
     password~,
     database~,
     client_flag~,
-  )
-  mysql.to_external()
+  ) else {
+    mysql.fail("Failed to connect to MariaDB server at \{host}:\{port}")
+  }
+  mysql
 }
 
 ///|
-#borrow(host, user, password, database)
+#borrow(mysql, host, user, password, database)
 extern "c" fn mariadb_connect_via_tcp_socket(
   mysql : MySql,
   host~ : Bytes,
@@ -38,18 +39,17 @@ extern "c" fn mariadb_connect_via_tcp_socket(
   password~ : Bytes,
   database~ : Bytes,
   client_flag~ : UInt,
-) -> Pointer = "moonbit_mariadb_connect_via_tcp_socket"
+) -> Bool = "moonbit_mariadb_connect_via_tcp_socket"
 
 ///|
 fn MySql::init() -> MySql raise {
-  let mysql = mysql_init(Pointer::null())
+  let mysql = mysql_init()
   guard !mysql.is_null() else { fail("Failed to initialize MySQL connection") }
   mysql.to_external()
 }
 
 ///|
-#borrow(mysql)
-extern "c" fn mysql_init(mysql : Pointer) -> Pointer = "mysql_init"
+extern "c" fn mysql_init() -> Pointer = "moonbit_mariadb_init"
 
 ///|
 pub fn connect_via_unix_socket(
@@ -64,19 +64,23 @@ pub fn connect_via_unix_socket(
   let user = @encoding/utf8.encode(user)
   let password = @encoding/utf8.encode(password)
   let database = @encoding/utf8.encode(database)
-  let mysql = mariadb_connect_via_unix_socket(
+  guard mariadb_connect_via_unix_socket(
     mysql,
     unix_socket,
     user~,
     password~,
     database~,
     client_flag~,
-  )
-  mysql.to_external()
+  ) else {
+    mysql.fail(
+      "Failed to connect to MariaDB server via unix socket \{unix_socket}",
+    )
+  }
+  mysql
 }
 
 ///|
-#borrow(unix_socket, user, password, database)
+#borrow(mysql, unix_socket, user, password, database)
 extern "c" fn mariadb_connect_via_unix_socket(
   mysql : MySql,
   unix_socket : Bytes,
@@ -84,11 +88,11 @@ extern "c" fn mariadb_connect_via_unix_socket(
   password~ : Bytes,
   database~ : Bytes,
   client_flag~ : UInt,
-) -> Pointer = "moonbit_mariadb_connect_via_unix_socket"
+) -> Bool = "moonbit_mariadb_connect_via_unix_socket"
 
 ///|
-#borrow(cs)
-pub extern "c" fn MySql::set_character_set(self : MySql, cs : Bytes) -> Int = "mysql_set_character_set"
+#borrow(self, cs)
+pub extern "c" fn MySql::set_character_set(self : MySql, cs : Bytes) -> Int = "moonbit_mariadb_mysql_set_character_set"
 
 ///|
 pub fn MySql::real_escape_string(self : Self, s : String) -> String {
@@ -105,13 +109,13 @@ pub fn MySql::real_escape_string(self : Self, s : String) -> String {
 }
 
 ///|
-#borrow(to, from)
+#borrow(mysql, to, from)
 extern "c" fn mysql_real_escape_string(
   mysql : MySql,
   to : Bytes,
   from : Bytes,
   length : UInt,
-) -> Int = "mysql_real_escape_string"
+) -> Int = "moonbit_mariadb_mysql_real_escape_string"
 
 ///|
 /// Executes the given query and returns the result.
@@ -125,23 +129,16 @@ pub fn MySql::execute(self : Self, query : String) -> QueryResult raise {
 }
 
 ///|
-#borrow(query)
+#borrow(mysql, query)
 extern "c" fn mysql_real_query(
   mysql : MySql,
   query : Bytes,
   length : UInt,
-) -> Int = "mysql_real_query"
+) -> Int = "moonbit_mariadb_mysql_real_query"
 
 ///|
-pub extern "c" fn MySql::close(self : MySql) = "mysql_close"
-
-///|
-pub fn MySql::affected_rows(self : Self) -> UInt {
-  mysql_affected_rows(self)
-}
-
-///|
-extern "c" fn mysql_affected_rows(mysql : MySql) -> UInt = "mysql_affected_rows"
+#borrow(self)
+pub extern "c" fn MySql::affected_rows(self : Self) -> UInt = "moonbit_mariadb_mysql_affected_rows"
 
 ///|
 /// Raise a Failure with the current MySQL error information as returned
@@ -158,7 +155,9 @@ pub fn[T] MySql::fail(
 }
 
 ///|
-extern "c" fn mysql_errno(mysql : MySql) -> UInt = "mysql_errno"
+#borrow(mysql)
+extern "c" fn mysql_errno(mysql : MySql) -> UInt = "moonbit_mariadb_mysql_errno"
 
 ///|
-extern "c" fn mysql_error(mysql : MySql) -> Pointer = "mysql_error"
+#borrow(mysql)
+extern "c" fn mysql_error(mysql : MySql) -> Pointer = "moonbit_mariadb_mysql_error"
