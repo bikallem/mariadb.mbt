@@ -6,11 +6,6 @@ struct MySqlRow(FixedArray[Bytes])
 priv type MYSQL_ROW
 
 ///|
-fn MySqlRow::new(row : MYSQL_ROW, column_count : UInt) -> MySqlRow {
-  MySqlRow(moonbit_row_column_values(row, column_count))
-}
-
-///|
 extern "c" fn moonbit_row_column_values(
   row : MYSQL_ROW,
   count : UInt,

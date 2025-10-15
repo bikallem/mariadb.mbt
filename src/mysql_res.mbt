@@ -18,16 +18,17 @@ pub extern "c" fn MySqlRes::num_fields(res : MySqlRes) -> UInt = "moonbit_mariad
 
 ///|
 pub fn MySqlRes::fetch_row(self : MySqlRes) -> MySqlRow? {
-  let row = mysql_fetch_row(self)
+  let row = self.mysql_fetch_row()
   guard !row.is_null() else { return None }
   let row : MYSQL_ROW = row.to_external()
   let column_count = self.num_fields()
-  Some(MySqlRow::new(row, column_count))
+  let row = MySqlRow(moonbit_row_column_values(row, column_count))
+  Some(row)
 }
 
 ///|
-#borrow(res)
-extern "c" fn mysql_fetch_row(res : MySqlRes) -> Pointer = "moonbit_mariadb_mysql_fetch_row"
+#borrow(self)
+extern "c" fn MySqlRes::mysql_fetch_row(self : MySqlRes) -> Pointer = "moonbit_mariadb_mysql_fetch_row"
 
 ///|
 pub fn MySqlRes::iter(self : MySqlRes) -> Iter[MySqlRow] {
