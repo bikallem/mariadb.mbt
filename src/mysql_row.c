@@ -1,7 +1,8 @@
-#include "moonbit.h"
-#include "mysql.h"
 #include <mysql/mysql.h>
 #include <string.h>
+
+#include "moonbit.h"
+#include "mysql.h"
 
 MOONBIT_FFI_EXPORT
 moonbit_bytes_t*

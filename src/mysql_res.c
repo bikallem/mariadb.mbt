@@ -1,7 +1,8 @@
-#include "moonbit.h"
-#include "mysql.h"
 #include <mysql/mysql.h>
 #include <string.h>
+
+#include "moonbit.h"
+#include "mysql.h"
 
 static inline void
 moonbit_mariadb_mysql_res_t_finalize(void* obj)

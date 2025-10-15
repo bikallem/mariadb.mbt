@@ -1,8 +1,9 @@
+#include "mysql.h"
+
 #include <mysql/mysql.h>
 #include <string.h>
 
 #include "moonbit.h"
-#include "mysql.h"
 
 static inline void
 moonbit_mariadb_mysql_t_finalize(void* obj)
@@ -41,7 +42,6 @@ moonbit_mariadb_connect_via_tcp_socket(moonbit_mariadb_mysql_t* mysql_t,
                                        const char* database,
                                        uint32_t client_flag)
 {
-
   return mysql_real_connect(mysql_t->mysql,
                             host,
                             user,
