@@ -9,12 +9,12 @@ struct QueryResult {
 priv type MYSQL_RES
 
 ///|
-fn QueryResult::new(mysql : MySql) -> QueryResult? {
+fn QueryResult::new(mysql : MySql) -> QueryResult raise {
   let res = mysql_store_result(mysql)
-  guard !res.is_null() else { return None }
+  guard !res.is_null() else { mysql.fail("Failed to store MySQL result") }
   let res : MYSQL_RES = res.to_external()
   let column_count = mysql_num_fields(res)
-  Some(QueryResult::{ res, column_count })
+  QueryResult::{ res, column_count }
 }
 
 ///|

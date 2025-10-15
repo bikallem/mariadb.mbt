@@ -4,4 +4,4 @@ target/
 .direnv/
 .mariadb/
 asan.log.*
-valgrid.log*
+valgrind.log*
