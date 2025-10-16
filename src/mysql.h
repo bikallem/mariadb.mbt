@@ -6,12 +6,19 @@
 
 typedef struct
 {
-  MYSQL* mysql;
+    MYSQL* mysql;
 } moonbit_mariadb_mysql_t;
 
 typedef struct
 {
-  MYSQL_RES* res;
+    MYSQL_RES* res;
 } moonbit_mariadb_mysql_res_t;
+
+typedef struct
+{
+    MYSQL_STMT* mysql_stmt;
+    MYSQL_BIND* mysql_binds;
+    uint32_t mysql_binds_count;
+} moonbit_mariadb_mysql_stmt_t;
 
 #endif // MOONBIT_MARIADB_H

@@ -2,8 +2,8 @@
     "native-stub": [
         "mariadb_stmt.c"
     ],
-    "import": [        
+    "import": [
         "bikallem/mariadb",
-        "bikallem/cffi"        
+        "bikallem/cffi"
     ]
 }
