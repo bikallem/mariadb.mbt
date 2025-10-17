@@ -110,9 +110,6 @@ moonbit_mariadb_stmt_bind_params(moonbit_mariadb_mysql_stmt_t* mysql_stmt_t,
                                  int32_t* bind_unsigned)
 {
     MYSQL_BIND* mysql_binds = calloc(columns_count, sizeof(MYSQL_BIND));
-    if (!mysql_binds) {
-        return 0;
-    }
     for (unsigned int i = 0; i < columns_count; i++) {
         mysql_binds[i].buffer_type = (enum enum_field_types)bind_types[i];
         mysql_binds[i].buffer = malloc(bind_sizes[i]);
