@@ -132,11 +132,35 @@ extern "c" fn mysql_type_blob() -> UInt = "moonbit_mariadb_mysql_type_blob"
 #borrow(self, sizes, types, unsigned)
 extern "c" fn MySqlStmt::stmt_bind_params(
   self : MySqlStmt,
-  columns_count : UInt,
+  params_count : UInt,
   sizes : FixedArray[UInt],
   types : FixedArray[UInt],
   unsigned : FixedArray[Bool],
 ) -> Bool = "moonbit_mariadb_stmt_bind_params"
+
+///|
+pub fn MySqlStmt::execute(
+  self : MySqlStmt,
+  param_values? : Map[Int, &MySqlStmtParamValue] = {},
+  result_field_types? : Array[MySqlStmtParam] = [],
+) -> Unit raise {
+  for i, value in param_values {
+    let (value_bytes, value_length) = value.value()
+    self.set_param_value(i, value_bytes, value_length.reinterpret_as_uint())
+  }
+  if mysql_stmt_execute(self) != 0 {
+    self.fail("Failed to execute MySQL statement")
+  }
+  let result_field_count = mysql_stmt_field_count(self)
+  guard result_field_count > 0 else { return }
+  guard result_field_count.reinterpret_as_int() == result_field_types.length() else {
+    self.fail("Result field types count mismatch")
+  }
+  let (sizes, types, unsigned) = params_to_mysql_binds(result_field_types)
+  guard self.stmt_bind_results(result_field_count, sizes, types, unsigned) else {
+    self.fail("Failed to bind statement result fields")
+  }
+}
 
 ///|
 #borrow(self)
@@ -147,3 +171,48 @@ extern "c" fn MySqlStmt::set_param_value(
   value : Bytes,
   length : UInt,
 ) -> Unit = "moonbit_mariadb_stmt_set_param_value"
+
+///|
+#borrow(mysql_stmt)
+extern "c" fn mysql_stmt_execute(mysql_stmt : MySqlStmt) -> Int = "moonbit_mariadb_mysql_stmt_execute"
+
+///|
+#borrow(mysql_stmt)
+extern "c" fn mysql_stmt_field_count(mysql_stmt : MySqlStmt) -> UInt = "moonbit_mariadb_mysql_stmt_field_count"
+
+///|
+#borrow(self, sizes, types, unsigned)
+extern "c" fn MySqlStmt::stmt_bind_results(
+  self : MySqlStmt,
+  result_field_count : UInt,
+  sizes : FixedArray[UInt],
+  types : FixedArray[UInt],
+  unsigned : FixedArray[Bool],
+) -> Bool = "moonbit_mariadb_stmt_bind_results"
+
+///|
+pub fn MySqlStmt::fetch(self : MySqlStmt) -> FixedArray[Bytes]? raise {
+  let fetch_result = self.stmt_fetch()
+  if fetch_result == mysql_no_data() {
+    return None
+  } else if fetch_result != 0 && fetch_result != mysql_data_truncated() {
+    self.fail("Failed to fetch statement result")
+  }
+  Some(self.stmt_result_column_values())
+}
+
+///|
+#borrow(mysql_stmt)
+extern "c" fn MySqlStmt::stmt_fetch(mysql_stmt : MySqlStmt) -> Int = "moonbit_mariadb_mysql_stmt_fetch"
+
+///|
+extern "c" fn mysql_no_data() -> Int = "moonbit_mariadb_stmt_mysql_no_data"
+
+///|
+extern "c" fn mysql_data_truncated() -> Int = "moonbit_mariadb_stmt_mysql_data_truncated"
+
+///|
+#borrow(mysql_stmt)
+extern "c" fn MySqlStmt::stmt_result_column_values(
+  mysql_stmt : MySqlStmt,
+) -> FixedArray[Bytes] = "moonbit_mariadb_stmt_result_column_values"

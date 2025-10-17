@@ -9,14 +9,26 @@ static inline void
 moonbit_mariadb_mysql_stmt_t_finalize(void* obj)
 {
     moonbit_mariadb_mysql_stmt_t* self = (moonbit_mariadb_mysql_stmt_t*)obj;
+    mysql_stmt_free_result(self->mysql_stmt);
     mysql_stmt_close(self->mysql_stmt);
-    for (int i = 0; i < self->mysql_binds_params_count; i++) {
-        moonbit_decref(self->mysql_binds_params[i].buffer);
-        free(self->mysql_binds_params[i].length);
-        free(self->mysql_binds_params[i].is_null);
-        free(self->mysql_binds_params[i].error);
+
+    // Free parameter binds if they exist
+    for (int i = 0; i < self->mysql_bind_params_count; i++) {
+        moonbit_decref(self->mysql_bind_params[i].buffer);
+        free(self->mysql_bind_params[i].length);
+        free(self->mysql_bind_params[i].is_null);
+        free(self->mysql_bind_params[i].error);
     }
-    free(self->mysql_binds_params);
+    free(self->mysql_bind_params);
+
+    // Free result binds if they exist
+    for (int i = 0; i < self->mysql_bind_results_count; i++) {
+        free(self->mysql_bind_results[i].buffer);
+        free(self->mysql_bind_results[i].length);
+        free(self->mysql_bind_results[i].is_null);
+        free(self->mysql_bind_results[i].error);
+    }
+    free(self->mysql_bind_results);
 }
 
 MOONBIT_FFI_EXPORT
@@ -37,8 +49,10 @@ moonbit_mariadb_mysql_stmt_init(moonbit_mariadb_mysql_t* mysql_t)
         return NULL;
     }
     mysql_stmt_t->mysql_stmt = stmt;
-    mysql_stmt_t->mysql_binds_params = NULL;
-    mysql_stmt_t->mysql_binds_params_count = 0;
+    mysql_stmt_t->mysql_bind_params = NULL;
+    mysql_stmt_t->mysql_bind_params_count = 0;
+    mysql_stmt_t->mysql_bind_results = NULL;
+    mysql_stmt_t->mysql_bind_results_count = 0;
     return mysql_stmt_t;
 }
 
@@ -102,44 +116,43 @@ moonbit_mariadb_mysql_type_blob(void)
 }
 
 static MYSQL_BIND*
-create_mysql_binds(int32_t columns_count,
+create_mysql_binds(int32_t count,
                    int32_t* bind_sizes,
                    int32_t* bind_types,
                    int32_t* bind_unsigned)
 {
-    MYSQL_BIND* mysql_binds_params = calloc(columns_count, sizeof(MYSQL_BIND));
-    if (mysql_binds_params == NULL) {
+    MYSQL_BIND* mysql_bind_params = calloc(count, sizeof(MYSQL_BIND));
+    if (mysql_bind_params == NULL) {
         return NULL;
     }
-    for (unsigned int i = 0; i < columns_count; i++) {
-        mysql_binds_params[i].buffer_type =
-          (enum enum_field_types)bind_types[i];
-        mysql_binds_params[i].buffer = malloc(bind_sizes[i]);
-        mysql_binds_params[i].buffer_length = bind_sizes[i];
-        mysql_binds_params[i].is_unsigned = bind_unsigned[i];
-        mysql_binds_params[i].length = malloc(sizeof(unsigned long));
-        mysql_binds_params[i].is_null = malloc(sizeof(my_bool));
-        mysql_binds_params[i].error = malloc(sizeof(my_bool));
-        *mysql_binds_params[i].is_null = 1; // Set to null by default
+    for (unsigned int i = 0; i < count; i++) {
+        mysql_bind_params[i].buffer_type = (enum enum_field_types)bind_types[i];
+        mysql_bind_params[i].buffer = malloc(bind_sizes[i]);
+        mysql_bind_params[i].buffer_length = bind_sizes[i];
+        mysql_bind_params[i].is_unsigned = bind_unsigned[i];
+        mysql_bind_params[i].length = malloc(sizeof(unsigned long));
+        mysql_bind_params[i].is_null = malloc(sizeof(my_bool));
+        mysql_bind_params[i].error = malloc(sizeof(my_bool));
+        *mysql_bind_params[i].is_null = 1; // Set to null by default
     }
-    return mysql_binds_params;
+    return mysql_bind_params;
 }
 
 MOONBIT_FFI_EXPORT
 int32_t // Bool
 moonbit_mariadb_stmt_bind_params(moonbit_mariadb_mysql_stmt_t* mysql_stmt_t,
-                                 int32_t columns_count,
+                                 int32_t params_count,
                                  int32_t* bind_sizes,
                                  int32_t* bind_types,
                                  int32_t* bind_unsigned)
 {
-    MYSQL_BIND* mysql_binds_params =
-      create_mysql_binds(columns_count, bind_sizes, bind_types, bind_unsigned);
-    if (mysql_binds_params == NULL) {
+    MYSQL_BIND* mysql_bind_params =
+      create_mysql_binds(params_count, bind_sizes, bind_types, bind_unsigned);
+    if (mysql_bind_params == NULL) {
         return 0; // False
     }
-    mysql_stmt_t->mysql_binds_params = mysql_binds_params;
-    mysql_stmt_t->mysql_binds_params_count = columns_count;
+    mysql_stmt_t->mysql_bind_params = mysql_bind_params;
+    mysql_stmt_t->mysql_bind_params_count = params_count;
     return 1;
 }
 
@@ -150,9 +163,9 @@ moonbit_mariadb_stmt_set_param_value(moonbit_mariadb_mysql_stmt_t* mysql_stmt_t,
                                      moonbit_bytes_t value,
                                      uint32_t length)
 {
-    mysql_stmt_t->mysql_binds_params[index].buffer = (void*)value;
-    *mysql_stmt_t->mysql_binds_params[index].is_null = 0; // Set to not null
-    *mysql_stmt_t->mysql_binds_params[index].length = length;
+    mysql_stmt_t->mysql_bind_params[index].buffer = (void*)value;
+    *mysql_stmt_t->mysql_bind_params[index].is_null = 0; // Set to not null
+    *mysql_stmt_t->mysql_bind_params[index].length = length;
 }
 
 MOONBIT_FFI_EXPORT
@@ -171,51 +184,66 @@ moonbit_mariadb_mysql_stmt_field_count(
 }
 
 MOONBIT_FFI_EXPORT
+int32_t // Bool
+moonbit_mariadb_stmt_bind_results(moonbit_mariadb_mysql_stmt_t* mysql_stmt_t,
+                                  int32_t result_field_count,
+                                  int32_t* bind_sizes,
+                                  int32_t* bind_types,
+                                  int32_t* bind_unsigned)
+{
+    MYSQL_BIND* mysql_bind_results = create_mysql_binds(
+      result_field_count, bind_sizes, bind_types, bind_unsigned);
+    if (mysql_bind_results == NULL) {
+        return 0; // False
+    }
+    mysql_stmt_t->mysql_bind_results = mysql_bind_results;
+    mysql_stmt_t->mysql_bind_results_count = result_field_count;
+    return (int32_t)mysql_stmt_bind_result(mysql_stmt_t->mysql_stmt,
+                                           mysql_bind_results);
+}
 
-// MOONBIT_FFI_EXPORT
-// moonbit_bytes_t*
-// moonbit_stmt_result_column_values(MYSQL_STMT* stmt,
-//                                   MYSQL_BIND* binds,
-//                                   u_int32_t count)
-// {
-//     moonbit_bytes_t* values =
-//       (moonbit_bytes_t*)moonbit_make_ref_array(count, NULL);
-//     for (int i = 0; i < count; i++) {
-//         if (*binds[i].is_null) {
-//             values[i] = moonbit_make_bytes(0, 0);
-//             continue;
-//         }
-//         unsigned long length = *binds[i].length;
-//         moonbit_bytes_t mb_bytes = moonbit_make_bytes(length, 0);
-//         binds[i].buffer = mb_bytes;
-//         binds[i].buffer_length = length;
-//         mysql_stmt_fetch_column(stmt, &binds[i], i, 0);
-//         binds[i].buffer = NULL;
-//         binds[i].buffer_length = 0;
-//         values[i] = mb_bytes;
-//     }
-//     return values;
-// }
+MOONBIT_FFI_EXPORT
+int32_t // Bool
+moonbit_mariadb_mysql_stmt_fetch(moonbit_mariadb_mysql_stmt_t* mysql_stmt_t)
+{
+    return (int32_t)mysql_stmt_fetch(mysql_stmt_t->mysql_stmt);
+}
 
-// MOONBIT_FFI_EXPORT
-// int32_t // Bool
-// moonbit_mariadb_mysql_stmt_bind_param(
-//   moonbit_mariadb_mysql_stmt_t* mysql_stmt_t)
-// {
-//     return (int32_t)mysql_stmt_bind_param(mysql_stmt_t->mysql_stmt,
-//                                           mysql_stmt_t->mysql_binds_params);
-// }
+MOONBIT_FFI_EXPORT
+int32_t
+moonbit_mariadb_stmt_mysql_no_data(void)
+{
+    return MYSQL_NO_DATA;
+}
 
-// MOONBIT_FFI_EXPORT
-// int32_t
-// moonbit_MYSQL_NO_DATA(void)
-// {
-//     return MYSQL_NO_DATA;
-// }
+MOONBIT_FFI_EXPORT
+int32_t
+moonbit_mariadb_stmt_mysql_data_truncated(void)
+{
+    return MYSQL_DATA_TRUNCATED;
+}
 
-// MOONBIT_FFI_EXPORT
-// int32_t
-// moonbit_MYSQL_DATA_TRUNCATED(void)
-// {
-//     return MYSQL_DATA_TRUNCATED;
-// }
+MOONBIT_FFI_EXPORT
+moonbit_bytes_t*
+moonbit_mariadb_stmt_result_column_values(
+  moonbit_mariadb_mysql_stmt_t* mysql_stmt_t)
+{
+    moonbit_bytes_t* values = (moonbit_bytes_t*)moonbit_make_ref_array(
+      mysql_stmt_t->mysql_bind_results_count, NULL);
+    for (int i = 0; i < mysql_stmt_t->mysql_bind_results_count; i++) {
+        if (*mysql_stmt_t->mysql_bind_results[i].is_null) {
+            values[i] = moonbit_make_bytes(0, 0);
+            continue;
+        }
+        unsigned long length = *mysql_stmt_t->mysql_bind_results[i].length;
+        moonbit_bytes_t mb_bytes = moonbit_make_bytes(length, 0);
+        mysql_stmt_t->mysql_bind_results[i].buffer = mb_bytes;
+        mysql_stmt_t->mysql_bind_results[i].buffer_length = length;
+        mysql_stmt_fetch_column(
+          mysql_stmt_t->mysql_stmt, &mysql_stmt_t->mysql_bind_results[i], i, 0);
+        mysql_stmt_t->mysql_bind_results[i].buffer = NULL;
+        mysql_stmt_t->mysql_bind_results[i].buffer_length = 0;
+        values[i] = mb_bytes;
+    }
+    return values;
+}

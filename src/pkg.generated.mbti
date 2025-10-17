@@ -39,7 +39,8 @@ fn[T : ColumnValue] MySqlRow::get(Self, Int) -> T?
 fn[T : ColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
 
 type MySqlStmt
-fn MySqlStmt::execute(Self, param_values? : Map[Int, &MySqlStmtParamValue], result_column_types? : Array[MySqlStmtParam]) -> Unit raise
+fn MySqlStmt::execute(Self, param_values? : Map[Int, &MySqlStmtParamValue], result_field_types? : Array[MySqlStmtParam]) -> Unit raise
+fn MySqlStmt::fetch(Self) -> FixedArray[Bytes]? raise
 
 pub(all) enum MySqlStmtParam {
   Int
