@@ -17,8 +17,8 @@ typedef struct
 typedef struct
 {
     MYSQL_STMT* mysql_stmt;
-    MYSQL_BIND* mysql_binds;
-    uint32_t mysql_binds_count;
+    MYSQL_BIND* mysql_binds_params;
+    uint32_t mysql_binds_params_count;
 } moonbit_mariadb_mysql_stmt_t;
 
 #endif // MOONBIT_MARIADB_H
