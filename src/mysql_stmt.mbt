@@ -8,7 +8,7 @@ pub fn stmt_prepare(
   param_types? : Array[MySqlStmtParamType] = [],
 ) -> MySqlStmt raise {
   let mysql_stmt = mysql_stmt_init(mysql)
-  guard (mysql_stmt.to() : MySqlStmt?) is Some(mysql_stmt) else {
+  guard (mysql_stmt.to_option() : MySqlStmt?) is Some(mysql_stmt) else {
     mysql.fail("Failed to initialize MySQL statement")
   }
   let query = @encoding/utf8.encode(query)
