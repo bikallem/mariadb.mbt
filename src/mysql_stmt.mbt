@@ -5,7 +5,7 @@ type MySqlStmt
 pub fn stmt_prepare(
   mysql : MySql,
   query : String,
-  param_types? : Array[MySqlStmtParamType] = [],
+  param_types? : Array[MySqlStmtParam] = [],
 ) -> MySqlStmt raise {
   let mysql_stmt = mysql_stmt_init(mysql)
   guard (mysql_stmt.to_option() : MySqlStmt?) is Some(mysql_stmt) else {
@@ -57,7 +57,7 @@ extern "c" fn mysql_stmt_param_count(mysql_stmt : MySqlStmt) -> UInt = "moonbit_
 
 ///|
 fn params_to_mysql_binds(
-  param_types : Array[MySqlStmtParamType],
+  param_types : Array[MySqlStmtParam],
 ) -> (FixedArray[UInt], FixedArray[UInt], FixedArray[Bool]) {
   let sizes : Array[UInt] = []
   let types : Array[UInt] = []

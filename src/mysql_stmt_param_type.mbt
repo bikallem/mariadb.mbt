@@ -1,6 +1,6 @@
 ///|
 /// MySQL data types encoded by the parameter.
-pub(all) enum MySqlStmtParamType {
+pub(all) enum MySqlStmtParam {
   Int // 32Bit, Corresponds to Moonbit Int/Bool
   UInt // 32Bit, Corresponds to Moonbit UInt
   Int64 // 64Bit, Corresponds to Moonbit Int64/UInt64

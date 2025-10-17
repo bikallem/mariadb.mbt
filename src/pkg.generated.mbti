@@ -6,7 +6,7 @@ fn connect_via_tcp_socket(host~ : String, port~ : UInt, user~ : String, password
 
 fn connect_via_unix_socket(unix_socket~ : String, user~ : String, password~ : String, database~ : String, client_flag? : UInt) -> MySql raise
 
-fn stmt_prepare(MySql, String, param_types? : Array[MySqlStmtParamType]) -> MySqlStmt raise
+fn stmt_prepare(MySql, String, param_types? : Array[MySqlStmtParam]) -> MySqlStmt raise
 
 // Errors
 pub suberror Err (String, UInt, String, SourceLoc)
@@ -40,7 +40,7 @@ fn[T : ColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
 
 type MySqlStmt
 
-pub(all) enum MySqlStmtParamType {
+pub(all) enum MySqlStmtParam {
   Int
   UInt
   Int64
