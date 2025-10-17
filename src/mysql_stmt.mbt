@@ -56,38 +56,11 @@ fn[E] MySqlStmt::fail(
 extern "c" fn mysql_stmt_param_count(mysql_stmt : MySqlStmt) -> UInt = "moonbit_mariadb_mysql_stmt_param_count"
 
 ///|
-const LONG : UInt = 0
-
-///|
-const ULONG : UInt = 1
-
-///|
-const LONGLONG : UInt = 2
-
-///|
-const ULONGLONG : UInt = 3
-
-///|
-const FLOAT : UInt = 4
-
-///|
-const DOUBLE : UInt = 5
-
-///|
-const STRING : UInt = 6
-
-///|
-const BLOB : UInt = 7
-
-///|
-const BOOL : UInt = 8
-
-///|
 fn params_to_mysql_binds(
   param_types : Array[MySqlStmtParamType],
 ) -> (FixedArray[UInt], FixedArray[UInt], FixedArray[Bool]) {
-  let sizes : FixedArray[UInt] = FixedArray::make(param_types.length(), 0)
-  let types : FixedArray[UInt] = FixedArray::make(param_types.length(), 0)
+  let sizes : Array[UInt] = []
+  let types : Array[UInt] = []
   let unsigned : FixedArray[Bool] = FixedArray::make(
     param_types.length(),
     false,
@@ -95,47 +68,65 @@ fn params_to_mysql_binds(
   for i, param_type in param_types {
     match param_type {
       Int => {
-        sizes[i] = 4
-        types[i] = LONG
+        sizes.push(4)
+        types.push(mysql_type_long())
       }
       UInt => {
-        sizes[i] = 4
-        types[i] = ULONG
+        sizes.push(4)
+        types.push(mysql_type_long())
         unsigned[i] = true
       }
       Int64 => {
-        sizes[i] = 8
-        types[i] = LONGLONG
+        sizes.push(8)
+        types.push(mysql_type_longlong())
       }
       UInt64 => {
-        sizes[i] = 8
-        types[i] = ULONGLONG
+        sizes.push(8)
+        types.push(mysql_type_longlong())
         unsigned[i] = true
       }
       Float => {
-        sizes[i] = 4
-        types[i] = FLOAT
+        sizes.push(4)
+        types.push(mysql_type_float())
       }
       Double => {
-        sizes[i] = 8
-        types[i] = DOUBLE
+        sizes.push(8)
+        types.push(mysql_type_double())
       }
       String(max_length) => {
-        sizes[i] = max_length
-        types[i] = STRING
+        sizes.push(max_length)
+        types.push(mysql_type_string())
       }
       Blob(max_length) => {
         sizes[i] = max_length
-        types[i] = BLOB
+        types.push(mysql_type_blob())
       }
       Bool => {
         sizes[i] = 4
-        types[i] = BOOL
+        types.push(mysql_type_long())
       }
     }
   }
-  (sizes, types, unsigned)
+  (FixedArray::from_array(sizes), FixedArray::from_array(types), unsigned)
 }
+
+///|
+extern "c" fn mysql_type_long() -> UInt = "moonbit_mariadb_mysql_type_long"
+
+///|
+extern "c" fn mysql_type_longlong() -> UInt = "moonbit_mariadb_mysql_type_longlong"
+
+///|
+extern "c" fn mysql_type_float() -> UInt = "moonbit_mariadb_mysql_type_float"
+
+///|
+extern "c" fn mysql_type_double() -> UInt = "moonbit_mariadb_mysql_type_double"
+
+///|
+extern "c" fn mysql_type_string() -> UInt = "moonbit_mariadb_mysql_type_string"
+
+///|
+extern "c" fn mysql_type_blob() -> UInt = "moonbit_mariadb_mysql_type_blob"
 
 ///|
 #borrow(self, sizes, types, unsigned)

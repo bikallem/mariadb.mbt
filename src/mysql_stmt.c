@@ -59,36 +59,46 @@ moonbit_mariadb_mysql_stmt_param_count(
     return mysql_stmt_param_count(mysql_stmt_t->mysql_stmt);
 }
 
-#define LONG 0
-#define ULONG 1
-#define LONGLONG 2
-#define ULONGLONG 3
-#define FLOAT 4
-#define DOUBLE 5
-#define STRING 6
-#define BLOB 7
-#define BOOL 8
-
-static enum enum_field_types
-buffer_type(uint32_t type)
+MOONBIT_FFI_EXPORT
+uint32_t
+moonbit_mariadb_mysql_type_long(void)
 {
-    switch (type) {
-        case LONG:
-        case ULONG:
-        case BOOL:
-            return MYSQL_TYPE_LONG;
-        case LONGLONG:
-        case ULONGLONG:
-            return MYSQL_TYPE_LONGLONG;
-        case FLOAT:
-            return MYSQL_TYPE_FLOAT;
-        case DOUBLE:
-            return MYSQL_TYPE_DOUBLE;
-        case BLOB:
-            return MYSQL_TYPE_BLOB;
-        default:
-            return MYSQL_TYPE_STRING;
-    }
+    return MYSQL_TYPE_LONG;
+}
+
+MOONBIT_FFI_EXPORT
+uint32_t
+moonbit_mariadb_mysql_type_longlong(void)
+{
+    return MYSQL_TYPE_LONGLONG;
+}
+
+MOONBIT_FFI_EXPORT
+uint32_t
+moonbit_mariadb_mysql_type_float(void)
+{
+    return MYSQL_TYPE_FLOAT;
+}
+
+MOONBIT_FFI_EXPORT
+uint32_t
+moonbit_mariadb_mysql_type_double(void)
+{
+    return MYSQL_TYPE_DOUBLE;
+}
+
+MOONBIT_FFI_EXPORT
+uint32_t
+moonbit_mariadb_mysql_type_string(void)
+{
+    return MYSQL_TYPE_STRING;
+}
+
+MOONBIT_FFI_EXPORT
+uint32_t
+moonbit_mariadb_mysql_type_blob(void)
+{
+    return MYSQL_TYPE_BLOB;
 }
 
 MOONBIT_FFI_EXPORT
@@ -104,7 +114,7 @@ moonbit_mariadb_stmt_bind_params(moonbit_mariadb_mysql_stmt_t* mysql_stmt_t,
         return 0;
     }
     for (unsigned int i = 0; i < columns_count; i++) {
-        mysql_binds[i].buffer_type = buffer_type(bind_types[i]);
+        mysql_binds[i].buffer_type = (enum enum_field_types)bind_types[i];
         mysql_binds[i].buffer = malloc(bind_sizes[i]);
         mysql_binds[i].buffer_length = bind_sizes[i];
         mysql_binds[i].is_unsigned = bind_unsigned[i];
