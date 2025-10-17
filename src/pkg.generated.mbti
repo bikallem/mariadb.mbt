@@ -39,6 +39,7 @@ fn[T : ColumnValue] MySqlRow::get(Self, Int) -> T?
 fn[T : ColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
 
 type MySqlStmt
+fn MySqlStmt::execute(Self, param_values? : Map[Int, &MySqlStmtParamValue], result_column_types? : Array[MySqlStmtParam]) -> Unit raise
 
 pub(all) enum MySqlStmtParam {
   Int
@@ -68,7 +69,7 @@ impl ColumnValue for String
 impl ColumnValue for Bytes
 
 pub trait MySqlStmtParamValue {
-  set_value(Self, MySqlStmt, Int) -> Unit
+  value(Self) -> (Bytes, Int)
 }
 impl MySqlStmtParamValue for Bool
 impl MySqlStmtParamValue for Int
