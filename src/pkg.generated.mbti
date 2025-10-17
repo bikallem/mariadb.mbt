@@ -67,3 +67,16 @@ impl ColumnValue for Double
 impl ColumnValue for String
 impl ColumnValue for Bytes
 
+pub trait MySqlStmtParamValue {
+  set_value(Self, MySqlStmt, Int) -> Unit
+}
+impl MySqlStmtParamValue for Bool
+impl MySqlStmtParamValue for Int
+impl MySqlStmtParamValue for Int64
+impl MySqlStmtParamValue for UInt
+impl MySqlStmtParamValue for UInt64
+impl MySqlStmtParamValue for Float
+impl MySqlStmtParamValue for Double
+impl MySqlStmtParamValue for String
+impl MySqlStmtParamValue for Bytes
+

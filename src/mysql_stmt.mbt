@@ -137,3 +137,13 @@ extern "c" fn MySqlStmt::stmt_bind_params(
   types : FixedArray[UInt],
   unsigned : FixedArray[Bool],
 ) -> Bool = "moonbit_mariadb_stmt_bind_params"
+
+///|
+#borrow(self)
+#owned(value)
+extern "c" fn MySqlStmt::set_param_value(
+  self : MySqlStmt,
+  index : Int,
+  value : Bytes,
+  length : UInt,
+) -> Unit = "moonbit_mariadb_stmt_set_param_value"
