@@ -1,4 +1,4 @@
 ///|
-pub(open) trait ColumnValue {
+pub(open) trait StmtResultColumnValue {
   to(value : Bytes) -> Self raise
 }

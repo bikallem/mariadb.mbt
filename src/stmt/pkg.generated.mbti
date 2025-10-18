@@ -39,25 +39,13 @@ pub(all) enum MySqlStmtParam {
 }
 
 type MySqlStmtResultRow
-fn[T : ColumnValue] MySqlStmtResultRow::get(Self, Int) -> T?
+fn[T : StmtResultColumnValue] MySqlStmtResultRow::get(Self, Int) -> T?
 #alias("_[_]")
-fn[T : ColumnValue] MySqlStmtResultRow::unsafe_get(Self, Int) -> T raise
+fn[T : StmtResultColumnValue] MySqlStmtResultRow::unsafe_get(Self, Int) -> T raise
 
 // Type aliases
 
 // Traits
-pub(open) trait ColumnValue {
-  to(Bytes) -> Self raise
-}
-impl ColumnValue for Bool
-impl ColumnValue for Int
-impl ColumnValue for Int64
-impl ColumnValue for UInt
-impl ColumnValue for Float
-impl ColumnValue for Double
-impl ColumnValue for String
-impl ColumnValue for Bytes
-
 pub trait MySqlStmtParamValue {
   value(Self) -> (Bytes, Int)
 }
@@ -70,4 +58,16 @@ impl MySqlStmtParamValue for Float
 impl MySqlStmtParamValue for Double
 impl MySqlStmtParamValue for String
 impl MySqlStmtParamValue for Bytes
+
+pub(open) trait StmtResultColumnValue {
+  to(Bytes) -> Self raise
+}
+impl StmtResultColumnValue for Bool
+impl StmtResultColumnValue for Int
+impl StmtResultColumnValue for Int64
+impl StmtResultColumnValue for UInt
+impl StmtResultColumnValue for Float
+impl StmtResultColumnValue for Double
+impl StmtResultColumnValue for String
+impl StmtResultColumnValue for Bytes
 

@@ -27,22 +27,22 @@ fn MySqlRes::iter(Self) -> Iter[MySqlRow]
 fn MySqlRes::num_fields(Self) -> UInt
 
 type MySqlRow
-fn[T : ColumnValue] MySqlRow::get(Self, Int) -> T?
+fn[T : ResColumnValue] MySqlRow::get(Self, Int) -> T?
 #alias("_[_]")
-fn[T : ColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
+fn[T : ResColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
 
 // Type aliases
 
 // Traits
-pub(open) trait ColumnValue {
+pub(open) trait ResColumnValue {
   to(Bytes) -> Self raise
 }
-impl ColumnValue for Bool
-impl ColumnValue for Int
-impl ColumnValue for Int64
-impl ColumnValue for UInt
-impl ColumnValue for Float
-impl ColumnValue for Double
-impl ColumnValue for String
-impl ColumnValue for Bytes
+impl ResColumnValue for Bool
+impl ResColumnValue for Int
+impl ResColumnValue for Int64
+impl ResColumnValue for UInt
+impl ResColumnValue for Float
+impl ResColumnValue for Double
+impl ResColumnValue for String
+impl ResColumnValue for Bytes
 
