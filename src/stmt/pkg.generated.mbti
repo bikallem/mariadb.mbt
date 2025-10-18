@@ -1,0 +1,49 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bikallem/mariadb/stmt"
+
+import(
+  "bikallem/mariadb"
+)
+
+// Values
+fn stmt_prepare(@mariadb.MySql, String, param_types? : Array[MySqlStmtParam]) -> MySqlStmt raise
+
+// Errors
+pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
+fn MySqlStmtError::output(Self, &Logger) -> Unit // from trait `Show`
+fn MySqlStmtError::to_string(Self) -> String // from trait `Show`
+impl Show for MySqlStmtError
+
+// Types and methods
+type MySqlStmt
+fn MySqlStmt::execute(Self, param_values? : Map[Int, &MySqlStmtParamValue], result_field_types? : Array[MySqlStmtParam]) -> Unit raise
+fn MySqlStmt::fetch(Self) -> FixedArray[Bytes]? raise
+
+pub(all) enum MySqlStmtParam {
+  Int
+  UInt
+  Int64
+  UInt64
+  Float
+  Double
+  String(UInt)
+  Blob(UInt)
+  Bool
+}
+
+// Type aliases
+
+// Traits
+pub trait MySqlStmtParamValue {
+  value(Self) -> (Bytes, Int)
+}
+impl MySqlStmtParamValue for Bool
+impl MySqlStmtParamValue for Int
+impl MySqlStmtParamValue for Int64
+impl MySqlStmtParamValue for UInt
+impl MySqlStmtParamValue for UInt64
+impl MySqlStmtParamValue for Float
+impl MySqlStmtParamValue for Double
+impl MySqlStmtParamValue for String
+impl MySqlStmtParamValue for Bytes
+

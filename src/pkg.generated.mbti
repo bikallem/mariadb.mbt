@@ -6,18 +6,11 @@ fn connect_via_tcp_socket(host~ : String, port~ : UInt, user~ : String, password
 
 fn connect_via_unix_socket(unix_socket~ : String, user~ : String, password~ : String, database~ : String, client_flag? : UInt) -> MySql raise
 
-fn stmt_prepare(MySql, String, param_types? : Array[MySqlStmtParam]) -> MySqlStmt raise
-
 // Errors
 pub suberror Err (String, UInt, String, SourceLoc)
 fn Err::output(Self, &Logger) -> Unit // from trait `Show`
 fn Err::to_string(Self) -> String // from trait `Show`
 impl Show for Err
-
-pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
-fn MySqlStmtError::output(Self, &Logger) -> Unit // from trait `Show`
-fn MySqlStmtError::to_string(Self) -> String // from trait `Show`
-impl Show for MySqlStmtError
 
 // Types and methods
 type MySql
@@ -38,22 +31,6 @@ fn[T : ColumnValue] MySqlRow::get(Self, Int) -> T?
 #alias("_[_]")
 fn[T : ColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
 
-type MySqlStmt
-fn MySqlStmt::execute(Self, param_values? : Map[Int, &MySqlStmtParamValue], result_field_types? : Array[MySqlStmtParam]) -> Unit raise
-fn MySqlStmt::fetch(Self) -> FixedArray[Bytes]? raise
-
-pub(all) enum MySqlStmtParam {
-  Int
-  UInt
-  Int64
-  UInt64
-  Float
-  Double
-  String(UInt)
-  Blob(UInt)
-  Bool
-}
-
 // Type aliases
 
 // Traits
@@ -68,17 +45,4 @@ impl ColumnValue for Float
 impl ColumnValue for Double
 impl ColumnValue for String
 impl ColumnValue for Bytes
-
-pub trait MySqlStmtParamValue {
-  value(Self) -> (Bytes, Int)
-}
-impl MySqlStmtParamValue for Bool
-impl MySqlStmtParamValue for Int
-impl MySqlStmtParamValue for Int64
-impl MySqlStmtParamValue for UInt
-impl MySqlStmtParamValue for UInt64
-impl MySqlStmtParamValue for Float
-impl MySqlStmtParamValue for Double
-impl MySqlStmtParamValue for String
-impl MySqlStmtParamValue for Bytes
 
