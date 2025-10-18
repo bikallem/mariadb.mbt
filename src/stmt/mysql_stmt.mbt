@@ -191,14 +191,21 @@ extern "c" fn MySqlStmt::stmt_bind_results(
 ) -> Bool = "moonbit_mariadb_stmt_bind_results"
 
 ///|
-pub fn MySqlStmt::fetch(self : MySqlStmt) -> FixedArray[Bytes]? raise {
+pub fn MySqlStmt::fetch(self : MySqlStmt) -> MySqlStmtFetchResult {
   let fetch_result = self.stmt_fetch()
   if fetch_result == mysql_no_data() {
-    return None
-  } else if fetch_result != 0 && fetch_result != mysql_data_truncated() {
-    self.fail("Failed to fetch statement result")
+    MySqlStmtFetchResult::NoData
+  } else if fetch_result == mysql_data_truncated() {
+    let column_values = self.stmt_result_column_values()
+    MySqlStmtFetchResult::Truncated(MySqlStmtResultRow(column_values))
+  } else if fetch_result == 0 {
+    let column_values = self.stmt_result_column_values()
+    MySqlStmtFetchResult::Data(MySqlStmtResultRow(column_values))
+  } else {
+    let error = mysql_stmt_error(self).to_bytes()
+      |> @encoding/utf8.decode_lossy(_)
+    MySqlStmtFetchResult::Error("Failed to fetch statement result: " + error)
   }
-  Some(self.stmt_result_column_values())
 }
 
 ///|

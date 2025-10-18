@@ -17,7 +17,14 @@ impl Show for MySqlStmtError
 // Types and methods
 type MySqlStmt
 fn MySqlStmt::execute(Self, param_values? : Map[Int, &MySqlStmtParamValue], result_field_types? : Array[MySqlStmtParam]) -> Unit raise
-fn MySqlStmt::fetch(Self) -> FixedArray[Bytes]? raise
+fn MySqlStmt::fetch(Self) -> MySqlStmtFetchResult
+
+pub enum MySqlStmtFetchResult {
+  Data(MySqlStmtResultRow)
+  Truncated(MySqlStmtResultRow)
+  NoData
+  Error(String)
+}
 
 pub(all) enum MySqlStmtParam {
   Int
@@ -31,9 +38,26 @@ pub(all) enum MySqlStmtParam {
   Bool
 }
 
+type MySqlStmtResultRow
+fn[T : ColumnValue] MySqlStmtResultRow::get(Self, Int) -> T?
+#alias("_[_]")
+fn[T : ColumnValue] MySqlStmtResultRow::unsafe_get(Self, Int) -> T raise
+
 // Type aliases
 
 // Traits
+pub(open) trait ColumnValue {
+  to(Bytes) -> Self raise
+}
+impl ColumnValue for Bool
+impl ColumnValue for Int
+impl ColumnValue for Int64
+impl ColumnValue for UInt
+impl ColumnValue for Float
+impl ColumnValue for Double
+impl ColumnValue for String
+impl ColumnValue for Bytes
+
 pub trait MySqlStmtParamValue {
   value(Self) -> (Bytes, Int)
 }

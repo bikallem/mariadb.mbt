@@ -34,7 +34,7 @@ fn[T : ColumnValue] MySqlRow::unsafe_get(Self, Int) -> T raise
 // Type aliases
 
 // Traits
-pub trait ColumnValue {
+pub(open) trait ColumnValue {
   to(Bytes) -> Self raise
 }
 impl ColumnValue for Bool
