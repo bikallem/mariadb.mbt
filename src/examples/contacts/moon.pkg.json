@@ -2,6 +2,7 @@
     "is-main": true,
     "import": [
         "bikallem/mariadb",
+        "bikallem/mariadb/stmt",        
         "moonbitlang/x/sys"
     ],
     "supported-targets": [

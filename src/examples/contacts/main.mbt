@@ -1,12 +1,9 @@
 ///|
-const MARIADB_SOCKET = "MARIADB_SOCKET"
-
-///|
 fn main {
   try {
     let env = @sys.get_env_vars()
     let mariadb = @mariadb.connect_via_unix_socket(
-      unix_socket=env[MARIADB_SOCKET],
+      unix_socket=env["MARIADB_SOCKET"],
       user="contacts_user",
       password="contacts_password",
       database="contacts_db",
@@ -20,6 +17,10 @@ fn main {
     )
     contacts_by_industry(mariadb)
     println("✓ Successfully retrieved all contacts in all industries!")
+    contacts_by_industry_stmt(mariadb, industry="Technology")
+    println(
+      "✓ Successfully retrieved all contacts in the Technology industry!",
+    )
   } catch {
     e => println("✗ Error: \{e}")
   }
@@ -50,5 +51,34 @@ fn contacts_by_industry(mariadb : MySql, industry? : String) -> Unit raise {
     let first_name = (row[1] : String)
     let last_name = (row[2] : String)
     println("- \{id}: \{first_name} \{last_name}")
+  }
+}
+
+///|
+fn contacts_by_industry_stmt(mariadb : MySql, industry? : String) -> Unit raise {
+  let query =
+    #|SELECT c.id, c.first_name, c.last_name FROM contacts c
+    #|INNER JOIN contact_companies cc ON cc.contact_id = c.id
+    #|INNER JOIN companies com ON com.id = cc.company_id
+    #|WHERE com.industry LIKE ?
+  let stmt = @stmt.stmt_prepare(mariadb, query, param_types=[
+    MySqlStmtParam::String(255),
+  ])
+  let industry = match industry {
+    None => "%%" // Match all industries
+    Some(industry) => "%\{industry}%"
+  }
+  stmt.execute(param_values={ 0: industry }, result_field_types=[
+    MySqlStmtParam::Int,
+    MySqlStmtParam::String(50),
+    MySqlStmtParam::String(50),
+  ])
+  loop stmt.fetch() {
+    MySqlStmtFetchResult::NoData => break
+    MySqlStmtFetchResult::Error(e) => fail("Failed to fetch contact: \{e}")
+    MySqlStmtFetchResult::Data(row) | MySqlStmtFetchResult::Truncated(row) => {
+      println("- \{(row[0] : Int)}: \{(row[1] : String)} \{(row[2] : String)}")
+      continue stmt.fetch()
+    }
   }
 }

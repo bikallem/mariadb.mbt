@@ -15,22 +15,17 @@ pub fn stmt_prepare(
   guard mysql_stmt_prepare(mysql_stmt, query, query.length()) == 0 else {
     mysql_stmt.fail("Failed to prepare MySQL statement")
   }
-  let params_count = mysql_stmt_param_count(mysql_stmt)
+  let params_count = param_types.length().reinterpret_as_uint()
   guard params_count > 0 else { return mysql_stmt }
-  guard params_count == param_types.length().reinterpret_as_uint() else {
-    mysql.fail(
-      "Parameter count mismatch: expected \{param_types.length()}, got \{params_count}",
-    )
-  }
   let (sizes, types, unsigned) = params_to_mysql_binds(param_types)
-  guard mysql_stmt.stmt_bind_params(params_count, sizes, types, unsigned) else {
+  guard mysql_stmt.stmt_bind_params(params_count, sizes, types, unsigned) == 0 else {
     mysql_stmt.fail("Failed to initialize MySQL statement binds")
   }
   mysql_stmt
 }
 
 ///|
-#borrow(mysql)
+#owned(mysql)
 extern "c" fn mysql_stmt_init(mysql : MySql) -> Pointer = "moonbit_mariadb_mysql_stmt_init"
 
 ///|
@@ -52,8 +47,8 @@ fn[E] MySqlStmt::fail(
 }
 
 ///|
-#borrow(mysql_stmt)
-extern "c" fn mysql_stmt_param_count(mysql_stmt : MySqlStmt) -> UInt = "moonbit_mariadb_mysql_stmt_param_count"
+// #borrow(self)
+// extern "c" fn MySqlStmt::stmt_param_count(self : MySqlStmt) -> UInt = "moonbit_mariadb_mysql_stmt_param_count"
 
 ///|
 fn params_to_mysql_binds(
@@ -136,7 +131,7 @@ extern "c" fn MySqlStmt::stmt_bind_params(
   sizes : FixedArray[UInt],
   types : FixedArray[UInt],
   unsigned : FixedArray[Bool],
-) -> Bool = "moonbit_mariadb_stmt_bind_params"
+) -> Int = "moonbit_mariadb_stmt_bind_params"
 
 ///|
 pub fn MySqlStmt::execute(
@@ -157,14 +152,13 @@ pub fn MySqlStmt::execute(
     self.fail("Result field types count mismatch")
   }
   let (sizes, types, unsigned) = params_to_mysql_binds(result_field_types)
-  guard self.stmt_bind_results(result_field_count, sizes, types, unsigned) else {
+  guard self.stmt_bind_results(result_field_count, sizes, types, unsigned) == 0 else {
     self.fail("Failed to bind statement result fields")
   }
 }
 
 ///|
-#borrow(self)
-#owned(value)
+#borrow(self, value)
 extern "c" fn MySqlStmt::set_param_value(
   self : MySqlStmt,
   index : Int,
@@ -188,7 +182,7 @@ extern "c" fn MySqlStmt::stmt_bind_results(
   sizes : FixedArray[UInt],
   types : FixedArray[UInt],
   unsigned : FixedArray[Bool],
-) -> Bool = "moonbit_mariadb_stmt_bind_results"
+) -> Int = "moonbit_mariadb_stmt_bind_results"
 
 ///|
 pub fn MySqlStmt::fetch(self : MySqlStmt) -> MySqlStmtFetchResult {

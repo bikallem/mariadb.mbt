@@ -1,6 +1,7 @@
 #include "mysql.h"
 
 #include <mysql/mysql.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "moonbit.h"
@@ -8,8 +9,9 @@
 static inline void
 moonbit_mariadb_mysql_t_finalize(void* obj)
 {
-    moonbit_mariadb_mysql_t* mysql_ptr = (moonbit_mariadb_mysql_t*)obj;
-    mysql_close(mysql_ptr->mysql);
+    moonbit_mariadb_mysql_t* mysql_t = (moonbit_mariadb_mysql_t*)obj;
+    mysql_close(mysql_t->mysql);
+    mysql_t->mysql = NULL;
 }
 
 MOONBIT_FFI_EXPORT
@@ -22,7 +24,7 @@ moonbit_mariadb_init(void)
     }
     moonbit_mariadb_mysql_t* mysql_t =
       (moonbit_mariadb_mysql_t*)moonbit_make_external_object(
-        moonbit_mariadb_mysql_t_finalize, sizeof(moonbit_mariadb_mysql_t));
+        &moonbit_mariadb_mysql_t_finalize, sizeof(moonbit_mariadb_mysql_t));
     if (mysql_t == NULL) {
         mysql_close(mysql);
         moonbit_decref(mysql_t);
