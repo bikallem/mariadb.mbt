@@ -1,9 +1,0 @@
-{
-    "native-stub": [
-        "mariadb_stmt.c"
-    ],
-    "import": [
-        "bikallem/mariadb",
-        "bikallem/cffi"
-    ]
-}
