@@ -1,9 +1,9 @@
 ///|
 fn main {
   try {
-    let env = @sys.get_env_vars()
-    let mariadb = @mariadb.connect_via_unix_socket(
-      unix_socket=env["MARIADB_SOCKET"],
+    let mariadb = @mariadb.real_connect(
+      host="127.0.0.1",
+      port=3307U,
       user="contacts_user",
       password="contacts_password",
       database="contacts_db",

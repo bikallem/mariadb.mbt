@@ -36,13 +36,14 @@ moonbit_mariadb_init(void)
 
 MOONBIT_FFI_EXPORT
 int32_t
-moonbit_mariadb_connect_via_tcp_socket(moonbit_mariadb_mysql_t* mysql_t,
-                                       const char* host,
-                                       uint32_t port,
-                                       const char* user,
-                                       const char* password,
-                                       const char* database,
-                                       uint32_t client_flag)
+moonbit_mariadb_mysql_real_connect(moonbit_mariadb_mysql_t* mysql_t,
+                                   const char* host,
+                                   const char* user,
+                                   const char* password,
+                                   const char* database,
+                                   uint32_t port,
+                                   const char* unix_socket,
+                                   uint32_t client_flag)
 {
     return mysql_real_connect(mysql_t->mysql,
                               host,
@@ -50,25 +51,6 @@ moonbit_mariadb_connect_via_tcp_socket(moonbit_mariadb_mysql_t* mysql_t,
                               password,
                               database,
                               port,
-                              NULL,
-                              client_flag) != NULL;
-}
-
-MOONBIT_FFI_EXPORT
-int32_t
-moonbit_mariadb_connect_via_unix_socket(moonbit_mariadb_mysql_t* mysql_t,
-                                        const char* unix_socket,
-                                        const char* user,
-                                        const char* password,
-                                        const char* database,
-                                        uint32_t client_flag)
-{
-    return mysql_real_connect(mysql_t->mysql,
-                              NULL,
-                              user,
-                              password,
-                              database,
-                              0,
                               unix_socket,
                               client_flag) != NULL;
 }

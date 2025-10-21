@@ -2,44 +2,54 @@
 type MySql
 
 ///|
-pub fn connect_via_tcp_socket(
-  host~ : String,
-  port~ : UInt,
+pub fn real_connect(
+  host? : String,
+  port? : UInt = 3306U,
   user~ : String,
   password~ : String,
   database~ : String,
+  unix_socket? : String,
   client_flag? : UInt = 0U,
 ) -> MySql raise {
-  let mysql = MySql::init()
-  let host = @encoding/utf8.encode(host)
+  let host = match host {
+    None => b"localhost"
+    Some(h) => @encoding/utf8.encode(h)
+  }
   let user = @encoding/utf8.encode(user)
   let password = @encoding/utf8.encode(password)
   let database = @encoding/utf8.encode(database)
-  guard mariadb_connect_via_tcp_socket(
-    mysql,
-    host~,
-    port~,
-    user~,
-    password~,
-    database~,
-    client_flag~,
-  ) else {
+  let unix_socket = match unix_socket {
+    None => Bytes::make(0, b'0')
+    Some(us) => @encoding/utf8.encode(us)
+  }
+  let mysql = MySql::init()
+  guard !mysql_real_connect(
+      mysql,
+      host~,
+      user~,
+      password~,
+      database~,
+      port~,
+      unix_socket~,
+      client_flag~,
+    ).is_null() else {
     mysql.fail("Failed to connect to MariaDB server at \{host}:\{port}")
   }
   mysql
 }
 
 ///|
-#borrow(mysql, host, user, password, database)
-extern "c" fn mariadb_connect_via_tcp_socket(
+#borrow(mysql, host, user, password, database, unix_socket, port)
+extern "c" fn mysql_real_connect(
   mysql : MySql,
   host~ : Bytes,
-  port~ : UInt,
   user~ : Bytes,
   password~ : Bytes,
   database~ : Bytes,
+  port~ : UInt,
+  unix_socket~ : Bytes,
   client_flag~ : UInt,
-) -> Bool = "moonbit_mariadb_connect_via_tcp_socket"
+) -> Pointer = "moonbit_mariadb_mysql_real_connect"
 
 ///|
 fn MySql::init() -> MySql raise {
@@ -50,45 +60,6 @@ fn MySql::init() -> MySql raise {
 
 ///|
 extern "c" fn mysql_init() -> Pointer = "moonbit_mariadb_init"
-
-///|
-pub fn connect_via_unix_socket(
-  unix_socket~ : String,
-  user~ : String,
-  password~ : String,
-  database~ : String,
-  client_flag? : UInt = 0U,
-) -> MySql raise {
-  let mysql = MySql::init()
-  let unix_socket = @encoding/utf8.encode(unix_socket)
-  let user = @encoding/utf8.encode(user)
-  let password = @encoding/utf8.encode(password)
-  let database = @encoding/utf8.encode(database)
-  guard mariadb_connect_via_unix_socket(
-    mysql,
-    unix_socket,
-    user~,
-    password~,
-    database~,
-    client_flag~,
-  ) else {
-    mysql.fail(
-      "Failed to connect to MariaDB server via unix socket \{unix_socket}",
-    )
-  }
-  mysql
-}
-
-///|
-#borrow(mysql, unix_socket, user, password, database)
-extern "c" fn mariadb_connect_via_unix_socket(
-  mysql : MySql,
-  unix_socket : Bytes,
-  user~ : Bytes,
-  password~ : Bytes,
-  database~ : Bytes,
-  client_flag~ : UInt,
-) -> Bool = "moonbit_mariadb_connect_via_unix_socket"
 
 ///|
 #borrow(self, cs)

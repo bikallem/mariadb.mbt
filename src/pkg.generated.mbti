@@ -2,9 +2,7 @@
 package "bikallem/mariadb"
 
 // Values
-fn connect_via_tcp_socket(host~ : String, port~ : UInt, user~ : String, password~ : String, database~ : String, client_flag? : UInt) -> MySql raise
-
-fn connect_via_unix_socket(unix_socket~ : String, user~ : String, password~ : String, database~ : String, client_flag? : UInt) -> MySql raise
+fn real_connect(host? : String, port? : UInt, user~ : String, password~ : String, database~ : String, unix_socket? : String, client_flag? : UInt) -> MySql raise
 
 // Errors
 pub suberror Err (String, UInt, String, SourceLoc)
