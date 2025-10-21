@@ -17,7 +17,7 @@ fn main {
     )
     contacts_by_industry(mariadb)
     println("✓ Successfully retrieved all contacts in all industries!")
-    contacts_by_industry_stmt(mariadb, industry="Technology")
+    contacts_by_industry_stmt(mariadb, ["Technology", "Manufacturing"])
     println(
       "✓ Successfully retrieved all contacts in the Technology industry!",
     )
@@ -55,30 +55,37 @@ fn contacts_by_industry(mariadb : MySql, industry? : String) -> Unit raise {
 }
 
 ///|
-fn contacts_by_industry_stmt(mariadb : MySql, industry? : String) -> Unit raise {
+fn contacts_by_industry_stmt(
+  mariadb : MySql,
+  industries : Array[String],
+) -> Unit raise {
   let query =
     #|SELECT c.id, c.first_name, c.last_name FROM contacts c
     #|INNER JOIN contact_companies cc ON cc.contact_id = c.id
     #|INNER JOIN companies com ON com.id = cc.company_id
     #|WHERE com.industry LIKE ?
-  let stmt = @stmt.stmt_prepare(mariadb, query, param_types=[
-    MySqlStmtParam::String(255),
-  ])
-  let industry = match industry {
-    None => "%%" // Match all industries
-    Some(industry) => "%\{industry}%"
+  let industry_param = {
+    let max_len = industries.fold(init=0, (max, s) => max.max(s.length())) + 2 // 2 for '%' chars at the front and the back
+    MySqlStmtParam::String(max_len.reinterpret_as_uint())
   }
-  stmt.execute(param_values={ 0: industry }, result_field_types=[
-    MySqlStmtParam::Int,
-    MySqlStmtParam::String(50),
-    MySqlStmtParam::String(50),
-  ])
-  loop stmt.fetch() {
-    MySqlStmtFetchResult::NoData => break
-    MySqlStmtFetchResult::Error(e) => fail("Failed to fetch contact: \{e}")
-    MySqlStmtFetchResult::Data(row) | MySqlStmtFetchResult::Truncated(row) => {
-      println("- \{(row[0] : Int)}: \{(row[1] : String)} \{(row[2] : String)}")
-      continue stmt.fetch()
+  let stmt = @stmt.stmt_prepare(mariadb, query, param_types=[industry_param])
+  for industry in industries {
+    println("Contacts in industry matching '\{industry}':")
+    let industry = "%\{industry}%"
+    stmt.execute(param_values={ 0: industry }, result_field_types=[
+      MySqlStmtParam::Int,
+      MySqlStmtParam::String(50),
+      MySqlStmtParam::String(50),
+    ])
+    loop stmt.fetch() {
+      MySqlStmtFetchResult::NoData => break
+      MySqlStmtFetchResult::Error(e) => fail("Failed to fetch contact: \{e}")
+      MySqlStmtFetchResult::Data(row) | MySqlStmtFetchResult::Truncated(row) => {
+        println(
+          "- \{(row[0] : Int)}: \{(row[1] : String)} \{(row[2] : String)}",
+        )
+        continue stmt.fetch()
+      }
     }
   }
 }
