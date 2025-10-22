@@ -6,6 +6,5 @@
     "native-stub": [
         "mysql_stmt.c",
         "mysql_stmt_error.c"
-    ]
-
+    ]    
 }
