@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../mysql.h"
+#include "mysql_stmt.h"
 #include "moonbit.h"
 
 static inline void
