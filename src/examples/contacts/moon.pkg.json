@@ -9,7 +9,9 @@
     ],
     "link": {
         "native": {
-            "cc-link-flags": "-lmariadb"
+            "cc-flags": "-fsanitize=address",
+            "cc-link-flags": "-lmariadb",
+            "stub-cc-flags": "-fsanitize=address"
         }
     }
 }

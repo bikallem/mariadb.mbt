@@ -10,8 +10,6 @@ fn stmt_prepare(@mariadb.MySql, String, param_types? : Array[MySqlStmtParam]) ->
 
 // Errors
 pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
-fn MySqlStmtError::output(Self, &Logger) -> Unit // from trait `Show`
-fn MySqlStmtError::to_string(Self) -> String // from trait `Show`
 impl Show for MySqlStmtError
 
 // Types and methods

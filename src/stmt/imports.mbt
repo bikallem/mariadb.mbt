@@ -1,5 +1,5 @@
 ///|
-typealias @cffi.Pointer
+using @cffi {type Pointer}
 
 ///|
-typealias @mariadb.MySql
+using @mariadb {type MySql}
