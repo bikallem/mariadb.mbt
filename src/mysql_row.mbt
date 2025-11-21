@@ -54,7 +54,7 @@ pub impl ResColumnValue for Bool with to(value : Bytes) -> Bool {
 ///|
 pub impl ResColumnValue for Float with to(value : Bytes) -> Float {
   let v = @encoding/utf8.decode_lossy(value)
-  @strconv.parse_double(v).to_float()
+  Float::from_double(@strconv.parse_double(v))
 }
 
 ///|

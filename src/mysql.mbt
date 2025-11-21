@@ -24,15 +24,15 @@ pub fn real_connect(
   }
   let mysql = MySql::init()
   guard !mysql_real_connect(
-      mysql,
-      host~,
-      user~,
-      password~,
-      database~,
-      port~,
-      unix_socket~,
-      client_flag~,
-    ).is_null() else {
+    mysql,
+    host~,
+    user~,
+    password~,
+    database~,
+    port~,
+    unix_socket~,
+    client_flag~,
+  ).is_null() else {
     mysql.fail("Failed to connect to MariaDB server at \{host}:\{port}")
   }
   mysql

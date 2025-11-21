@@ -27,32 +27,38 @@ pub fn[T : StmtResultColumnValue] MySqlStmtResultRow::get(
 
 ///|
 pub impl StmtResultColumnValue for Int with to(value : Bytes) -> Int {
-  value[:4].to_int_le()
+  guard value is [i32le(v), ..]
+  v
 }
 
 ///|
 pub impl StmtResultColumnValue for UInt with to(value : Bytes) -> UInt {
-  value[:4].to_uint_le()
+  guard value is [u32le(v), ..]
+  v
 }
 
 ///|
 pub impl StmtResultColumnValue for Int64 with to(value : Bytes) -> Int64 {
-  value[:8].to_int64_le()
+  guard value is [i64le(v), ..]
+  v
 }
 
 ///|
 pub impl StmtResultColumnValue for Bool with to(value : Bytes) -> Bool {
-  value[:4].to_int_le() != 0
+  guard value is [u32le(v), ..]
+  v != 0
 }
 
 ///|
 pub impl StmtResultColumnValue for Float with to(value : Bytes) -> Float {
-  value[:4].to_float_le()
+  guard value is [u32le(v), ..]
+  Float::from_uint(v)
 }
 
 ///|
 pub impl StmtResultColumnValue for Double with to(value : Bytes) -> Double {
-  value[:8].to_double_le()
+  guard value is [u64le(u64), ..]
+  u64.reinterpret_as_double()
 }
 
 ///|

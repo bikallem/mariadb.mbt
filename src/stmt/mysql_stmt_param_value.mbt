@@ -6,17 +6,45 @@ pub trait MySqlStmtParamValue {
 
 ///|
 pub impl MySqlStmtParamValue for Int with value(self : Int) -> (Bytes, Int) {
-  (self.to_le_bytes(), 4)
+  (
+    [
+      (self & 0xFF).to_byte(),
+      ((self >> 8) & 0xFF).to_byte(),
+      ((self >> 16) & 0xFF).to_byte(),
+      ((self >> 24) & 0xFF).to_byte(),
+    ],
+    4,
+  )
 }
 
 ///|
 pub impl MySqlStmtParamValue for UInt with value(self : UInt) -> (Bytes, Int) {
-  (self.to_le_bytes(), 4)
+  (
+    [
+      (self & 0xFF).to_byte(),
+      ((self >> 8) & 0xFF).to_byte(),
+      ((self >> 16) & 0xFF).to_byte(),
+      ((self >> 24) & 0xFF).to_byte(),
+    ],
+    4,
+  )
 }
 
 ///|
 pub impl MySqlStmtParamValue for Int64 with value(self : Int64) -> (Bytes, Int) {
-  (self.to_le_bytes(), 8)
+  (
+    [
+      (self & 0xFF).to_byte(),
+      ((self >> 8) & 0xFF).to_byte(),
+      ((self >> 16) & 0xFF).to_byte(),
+      ((self >> 24) & 0xFF).to_byte(),
+      ((self >> 32) & 0xFF).to_byte(),
+      ((self >> 40) & 0xFF).to_byte(),
+      ((self >> 48) & 0xFF).to_byte(),
+      ((self >> 56) & 0xFF).to_byte(),
+    ],
+    8,
+  )
 }
 
 ///|
@@ -24,13 +52,33 @@ pub impl MySqlStmtParamValue for UInt64 with value(self : UInt64) -> (
   Bytes,
   Int,
 ) {
-  (self.to_le_bytes(), 8)
+  (
+    [
+      (self & 0xFF).to_byte(),
+      ((self >> 8) & 0xFF).to_byte(),
+      ((self >> 16) & 0xFF).to_byte(),
+      ((self >> 24) & 0xFF).to_byte(),
+      ((self >> 32) & 0xFF).to_byte(),
+      ((self >> 40) & 0xFF).to_byte(),
+      ((self >> 48) & 0xFF).to_byte(),
+      ((self >> 56) & 0xFF).to_byte(),
+    ],
+    8,
+  )
 }
 
 ///|
 pub impl MySqlStmtParamValue for Bool with value(self : Bool) -> (Bytes, Int) {
   let v = self.to_int()
-  (v.to_le_bytes(), 4)
+  (
+    [
+      (v & 0xFF).to_byte(),
+      ((v >> 8) & 0xFF).to_byte(),
+      ((v >> 16) & 0xFF).to_byte(),
+      ((v >> 24) & 0xFF).to_byte(),
+    ],
+    4,
+  )
 }
 
 ///|
