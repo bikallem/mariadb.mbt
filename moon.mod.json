@@ -5,7 +5,7 @@
     "bikallem/cffi": {
       "path": "../cffi"
     },
-    "moonbitlang/x": "0.4.34"
+    "moonbitlang/x": "0.4.38"
   },
   "readme": "README.md",
   "repository": "github.com/bikallem/mariadb.mbt",

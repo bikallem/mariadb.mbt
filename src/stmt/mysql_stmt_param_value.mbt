@@ -91,7 +91,9 @@ pub impl MySqlStmtParamValue for Double with value(self : Double) -> (
   Bytes,
   Int,
 ) {
-  (self.to_le_bytes(), 8)
+  let buffer = @buffer.new(size_hint=8)
+  buffer.write_double_le(self)
+  (buffer.to_bytes(), 8)
 }
 
 ///|
