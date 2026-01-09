@@ -32,13 +32,5 @@ extern "c" fn MySqlRes::mysql_fetch_row(self : MySqlRes) -> Pointer = "moonbit_m
 
 ///|
 pub fn MySqlRes::iter(self : MySqlRes) -> Iter[MySqlRow] {
-  Iter::new(fn(visit : (MySqlRow) -> IterResult) {
-    loop self.fetch_row() {
-      Some(row) => {
-        guard visit(row) == IterContinue else { break IterEnd }
-        continue self.fetch_row()
-      }
-      None => break IterEnd
-    }
-  })
+  Iter::new(fn() { self.fetch_row() })
 }

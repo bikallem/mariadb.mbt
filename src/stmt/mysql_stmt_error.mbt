@@ -1,9 +1,11 @@
 ///|
-pub suberror MySqlStmtError (String, UInt, String, SourceLoc)
+pub suberror MySqlStmtError {
+  MySqlStmtError(String, UInt, String, SourceLoc)
+}
 
 ///|
 pub impl Show for MySqlStmtError with output(self, logger) {
-  let MySqlStmtError((msg, errcode, error, loc)) = self
+  let MySqlStmtError(msg, errcode, error, loc) = self
   logger.write_string("MySqlStmtError(\{msg}), (\{errcode} \{error}) at \{loc}")
 }
 
@@ -16,7 +18,7 @@ fn MySqlStmtError::new(
 ) -> MySqlStmtError {
   let error = mysql_stmt_error(mysql_stmt).to_bytes()
     |> @encoding/utf8.decode_lossy(_)
-  MySqlStmtError((err_msg, mysql_stmt_errno(mysql_stmt), error, loc))
+  MySqlStmtError(err_msg, mysql_stmt_errno(mysql_stmt), error, loc)
 }
 
 ///|

@@ -83,7 +83,16 @@ pub impl MySqlStmtParamValue for Bool with value(self : Bool) -> (Bytes, Int) {
 
 ///|
 pub impl MySqlStmtParamValue for Float with value(self : Float) -> (Bytes, Int) {
-  (self.to_le_bytes(), 4)
+  let bits = self.reinterpret_as_int()
+  (
+    [
+      (bits & 0xFF).to_byte(),
+      ((bits >> 8) & 0xFF).to_byte(),
+      ((bits >> 16) & 0xFF).to_byte(),
+      ((bits >> 24) & 0xFF).to_byte(),
+    ],
+    4,
+  )
 }
 
 ///|
@@ -91,7 +100,20 @@ pub impl MySqlStmtParamValue for Double with value(self : Double) -> (
   Bytes,
   Int,
 ) {
-  (self.to_le_bytes(), 8)
+  let bits = self.reinterpret_as_int64()
+  (
+    [
+      (bits & 0xFF).to_byte(),
+      ((bits >> 8) & 0xFF).to_byte(),
+      ((bits >> 16) & 0xFF).to_byte(),
+      ((bits >> 24) & 0xFF).to_byte(),
+      ((bits >> 32) & 0xFF).to_byte(),
+      ((bits >> 40) & 0xFF).to_byte(),
+      ((bits >> 48) & 0xFF).to_byte(),
+      ((bits >> 56) & 0xFF).to_byte(),
+    ],
+    8,
+  )
 }
 
 ///|

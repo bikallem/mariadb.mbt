@@ -122,7 +122,7 @@ pub fn[T] MySql::fail(
   loc~ : SourceLoc,
 ) -> T raise {
   let error = mysql_error(self).to_bytes() |> @encoding/utf8.decode_lossy(_)
-  raise Err((err_msg, mysql_errno(self), error, loc))
+  raise Err(err_msg, mysql_errno(self), error, loc)
 }
 
 ///|

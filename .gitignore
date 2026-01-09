@@ -5,3 +5,5 @@ target/
 .mariadb/
 asan.log.*
 valgrind.log*
+_build
+target
